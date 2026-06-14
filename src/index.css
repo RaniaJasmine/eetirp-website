@@ -1,0 +1,84 @@
+@import url('https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@100..900&family=JetBrains+Mono:wght@100..900&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-background: #f4f1ea;
+  --color-surface-dim: #f4f1ea;
+  --color-surface-bright: #ffffff;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f8f6f0;
+  --color-surface-container: #eae6db;
+  --color-surface-container-high: #e2dcd0;
+  --color-surface-container-highest: #d9d2c2;
+  --color-on-surface: #0b1f3b;
+  --color-on-surface-variant: #6f8faf;
+  --color-primary: #0b1f3b;
+  --color-on-primary: #ffffff;
+  --color-secondary: #6f8faf;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #1f3a5f;
+  --color-on-secondary-container: #ffffff;
+  --color-tertiary: #1f3a5f;
+  --color-on-tertiary: #ffffff;
+  --color-surface-variant: #eae6db;
+  --color-inverse-on-surface: #ffffff;
+  --color-outline: #1f3a5f;
+  --color-outline-variant: #bfd3e6;
+
+  --font-sans: 'Hanken Grotesk', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+}
+
+@layer utilities {
+  .glass-surface {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    border-top: 1px solid rgba(0, 19, 46, 0.08);
+    border-left: 1px solid rgba(0, 19, 46, 0.08);
+    border-bottom: 1px solid rgba(0, 19, 46, 0.12);
+    border-right: 1px solid rgba(0, 19, 46, 0.12);
+  }
+
+  .glow-border {
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .glow-border:hover {
+    box-shadow: 0 10px 30px rgba(0, 19, 46, 0.05);
+    border-color: rgba(122, 63, 237, 0.2);
+  }
+
+  .terminal-glow {
+    text-shadow: 0 0 8px rgba(122, 63, 237, 0.3);
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f4f1ea;
+}
+::-webkit-scrollbar-thumb {
+  background: #bab5a6;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #00132e;
+}
+
+/* Custom Marquee animation */
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  animation: marquee 35s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}

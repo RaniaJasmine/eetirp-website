@@ -1,0 +1,6 @@
+{
+  "name": "EETIRP Hybrid Tech Studio",
+  "description": "Operating at the intersection of classical engineering and cloud-scale software architectures. Bridging the gap between core engineering and live scalable systems.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
