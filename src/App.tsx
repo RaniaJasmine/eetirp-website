@@ -120,6 +120,12 @@ export default function App() {
         outputResult = 'Running automated onboarding test rules... SUCCESS. Candidate Day-1 deployment index score calculated at 94.2%. Output metrics ready.';
         outputType = 'success';
         break;
+      case 'whoami':
+        outputResult = 'You are a future engineering leader at EETIRP!';
+        break;
+      case 'version':
+        outputResult = 'EETIRP Core v3.1.2 | Build: 2026-06-14';
+        break;
       default:
         outputResult = `Command error: "${terminalInput}" is unsupported by core telemetry kernel. Type "help" for active operational rules.`;
         outputType = 'error';
