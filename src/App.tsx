@@ -44,24 +44,12 @@ import { LiveApp, OnboardingDiagnostic, TerminalHistory } from './types';
 export default function App() {
   const logoUrl = 'https://lh3.googleusercontent.com/aida-public/AB6AXuA0Tb6eZNPswTOWvOMp-_Cr62CASvc3c1--t-f0c7jsDTf3DDa7VXGVV11ESxGD_HPDFE6RpScmJ370lwrrXmeazaZQYIj8m7hn0bJnYSqk3_XU5Dcss9V5eW-P-xrSNI2qfpfd9ie5Xo4uoeJkjFjwkdZpiCEgEQwCCuNfJ2qP6w02tLoQGSCGsEMAaHgvSpakzfOeNKfmFZIVxuo120cSRST7WO0Yiycj1foar3k9F_g1CBYb24k1YjOVtZMW5K-7OamqD3AzPLU';
 
-  const [introActive, setIntroActive] = useState(true);
+  const [introActive, setIntroActive] = useState(false);
   const [introPhase, setIntroPhase] = useState<'logo' | 'words'>('logo');
 
   useEffect(() => {
-    const timer1 = setTimeout(() => {
-      setIntroPhase('words');
-    }, 2000);
-
-    const timer2 = setTimeout(() => {
-      setIntroActive(false);
-      // Ensure the page is at the absolute top when the preloader starts showing the main site
-      window.scrollTo(0, 0);
-    }, 5500);
-
-    return () => {
-      clearTimeout(timer1);
-      clearTimeout(timer2);
-    };
+    // No preloader - just show the site immediately
+    setIntroActive(false);
   }, []);
 
   const scrollSmoothTo = (elementId: string) => {
@@ -76,65 +64,6 @@ export default function App() {
 
   // State for SaaS Labs interactive simulator
   const [selectedProjectId, setSelectedProjectId] = useState<'placement' | 'kaura' | 'studio'>('placement');
-
-  // State for Terminal Shell Interactive Widget
-  const [terminalInput, setTerminalInput] = useState('');
-  const [terminalHistory, setTerminalHistory] = useState<TerminalHistory[]>([
-    { command: 'system --status', result: 'EETIRP Catalyst Platform initialized. Core systems listening.', type: 'success' },
-    { command: 'help', result: 'Available variables: help, clear, apps --list, status --telemetry, diagnostics --init', type: 'info' }
-  ]);
-  const terminalBottomRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (terminalBottomRef.current) {
-      terminalBottomRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, [terminalHistory]);
-
-  const handleTerminalSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    const cleanCommand = terminalInput.trim().toLowerCase();
-    if (!cleanCommand) return;
-
-    let outputResult = '';
-    let outputType: 'success' | 'error' | 'info' = 'info';
-
-    switch (cleanCommand) {
-      case 'help':
-        outputResult = 'Available variables: help, clear, apps --list, status --telemetry, diagnostics --init';
-        outputType = 'info';
-        break;
-      case 'clear':
-        setTerminalHistory([]);
-        setTerminalInput('');
-        return;
-      case 'apps --list':
-        outputResult = '01. Placement AI Platform (v2.0.4) -> Port 3000 Stable\n02. Kaura Hub Portal (v1.1.0) -> Port 443 Sync Active\n03. Live Production Telemetry Mesh -> Global Nodes Active';
-        outputType = 'success';
-        break;
-      case 'status --telemetry':
-        outputResult = 'LATENCY: 8ms | REGION: Singapore/Bengaluru Nodes | ACTIVE BRANCHES: 15+ Main Repos';
-        outputType = 'success';
-        break;
-      case 'diagnostics --init':
-        outputResult = 'Running automated onboarding test rules... SUCCESS. Candidate Day-1 deployment index score calculated at 94.2%. Output metrics ready.';
-        outputType = 'success';
-        break;
-      case 'whoami':
-        outputResult = 'You are a future engineering leader at EETIRP!';
-        break;
-      case 'version':
-        outputResult = 'EETIRP Core v3.1.2 | Build: 2026-06-14';
-        break;
-      default:
-        outputResult = `Command error: "${terminalInput}" is unsupported by core telemetry kernel. Type "help" for active operational rules.`;
-        outputType = 'error';
-        break;
-    }
-
-    setTerminalHistory((prev) => [...prev, { command: terminalInput, result: outputResult, type: outputType }]);
-    setTerminalInput('');
-  };
 
   // State for onboarding contact form
   const [formData, setFormData] = useState({
@@ -160,7 +89,6 @@ export default function App() {
     setSubmitStatus('idle');
 
     try {
-      // Prepared for manual backend email sending integration
       const response = await fetch('/api/onboarding', {
         method: 'POST',
         headers: {
@@ -195,66 +123,6 @@ export default function App() {
 
   return (
     <div className="bg-[#f4f1ea] text-[#0b1f3b] selection:bg-[#bfd3e6]/50 selection:text-[#0b1f3b] font-sans overflow-x-hidden min-h-screen flex flex-col pt-12" id="top-anchor">
-
-      {/* 0. Preloader Splash Sequence */}
-      <AnimatePresence>
-        {introActive && (
-          <motion.div
-            key="preloader-screen"
-            initial={{ opacity: 1 }}
-            exit={{ opacity: 0, transition: { duration: 0.6, ease: "easeInOut" } }}
-            className="fixed inset-0 z-[999] flex flex-col items-center justify-center bg-[#f4f1ea] select-none text-[#0b1f3b]"
-          >
-            {introPhase === 'logo' ? (
-              <motion.div
-                key="logo-reveal-stage"
-                initial={{ opacity: 0, scale: 0.85 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.4 } }}
-                transition={{ duration: 1.4, ease: [0.16, 1, 0.3, 1] }}
-                className="flex flex-col items-center justify-center text-center p-6"
-              >
-                <div className="w-80 h-80 sm:w-96 sm:h-96 flex items-center justify-center select-none">
-                  <EetirpLogo className="w-full h-full" isAnimated={true} showSlogan={false} />
-                </div>
-              </motion.div>
-            ) : (
-              <motion.div
-                key="words-reveal-stage"
-                initial={{ opacity: 1 }}
-                className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-14 font-sans text-4xl sm:text-5xl md:text-6xl font-black uppercase text-[#0b1f3b] tracking-tight px-6"
-              >
-                <motion.span
-                  initial={{ x: -250, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  transition={{ duration: 0.8, delay: 0.2, type: "spring", stiffness: 70 }}
-                  className="relative px-3 py-1.5 border-b-4 border-[#1f3a5f]"
-                >
-                  INNOVATE
-                </motion.span>
-
-                <motion.span
-                  initial={{ x: 250, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  transition={{ duration: 0.8, delay: 1.0, type: "spring", stiffness: 70 }}
-                  className="relative px-3 py-1.5 border-b-4 border-[#6f8faf]"
-                >
-                  INTEGRATE
-                </motion.span>
-
-                <motion.span
-                  initial={{ x: -250, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  transition={{ duration: 0.8, delay: 1.8, type: "spring", stiffness: 70 }}
-                  className="relative px-3 py-1.5 border-b-4 border-[#bfd3e6] text-[#1f3a5f]"
-                >
-                  ELEVATE
-                </motion.span>
-              </motion.div>
-            )}
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       {/* 1. Header Navigation System */}
       <Navbar />
@@ -708,10 +576,10 @@ export default function App() {
           {/* Pillar 1 */}
           <motion.div
             whileHover={{ y: -4 }}
-            className="flex flex-col justify-between group p-6 rounded-2xl hover:bg-[#0b1f3b]/5 transition-all duration-300"
+            className="flex flex-col justify-between p-7 rounded-2xl bg-white border border-[#00132e]/10 shadow-sm hover:shadow-md hover:border-[#7a3fed]/30 transition-all duration-300"
           >
             <div>
-              <div className="w-12 h-12 rounded-xl bg-[#7a3fed]/10 flex items-center justify-center text-[#7a3fed] mb-5 border border-[#7a3fed]/20">
+              <div className="w-12 h-12 rounded-xl bg-purple-50 flex items-center justify-center text-[#7a3fed] mb-5 border border-purple-100">
                 <BookOpen className="w-6 h-6" />
               </div>
               <h3 className="font-sans text-lg font-black text-[#00132e] mb-3">
@@ -721,18 +589,20 @@ export default function App() {
                 Structured modules covering DSA, systems architecture, networking, databases, and standard engineer practices built around company assessments.
               </p>
             </div>
-            <span className="font-mono text-[10px] tracking-widest text-[#7a3fed] uppercase font-extrabold group-hover:underline">
-              ACADEMY FOCUS →
-            </span>
+            <div>
+              <span className="inline-block font-mono text-[10px] tracking-widest text-[#7a3fed] uppercase font-bold bg-purple-50 border border-purple-100 px-3 py-1 rounded select-none">
+                ACADEMY FOCUS
+              </span>
+            </div>
           </motion.div>
 
           {/* Pillar 2 */}
           <motion.div
             whileHover={{ y: -4 }}
-            className="flex flex-col justify-between group p-6 rounded-2xl hover:bg-[#0b1f3b]/5 transition-all duration-300"
+            className="flex flex-col justify-between p-7 rounded-2xl bg-white border border-[#00132e]/10 shadow-sm hover:shadow-md hover:border-[#04a0e9]/30 transition-all duration-300"
           >
             <div>
-              <div className="w-12 h-12 rounded-xl bg-[#04a0e9]/10 flex items-center justify-center text-[#04a0e9] mb-5 border border-[#04a0e9]/20">
+              <div className="w-12 h-12 rounded-xl bg-cyan-50 flex items-center justify-center text-[#04a0e9] mb-5 border border-cyan-100">
                 <Code2 className="w-6 h-6" />
               </div>
               <h3 className="font-sans text-lg font-black text-[#00132e] mb-3">
@@ -742,39 +612,43 @@ export default function App() {
                 Hyper-focused, stack-specific sprints building real-time apps. Go deep into React, Next.js, Node, Golang, and Cloud Infrastructure.
               </p>
             </div>
-            <span className="font-mono text-[10px] tracking-widest text-[#04a0e9] uppercase font-extrabold group-hover:underline">
-              SPRINT MODEL →
-            </span>
+            <div>
+              <span className="inline-block font-mono text-[10px] tracking-widest text-[#04a0e9] uppercase font-bold bg-[#04a0e9]/10 border border-[#04a0e9]/20 px-3 py-1 rounded select-none">
+                SPRINT MODEL
+              </span>
+            </div>
           </motion.div>
 
           {/* Pillar 3 */}
           <motion.div
             whileHover={{ y: -4 }}
-            className="flex flex-col justify-between group p-6 rounded-2xl hover:bg-[#0b1f3b]/5 transition-all duration-300"
+            className="flex flex-col justify-between p-7 rounded-2xl bg-white border border-[#00132e]/10 shadow-sm hover:shadow-md hover:border-green-500/20 transition-all duration-300"
           >
             <div>
-              <div className="w-12 h-12 rounded-xl bg-green-100 flex items-center justify-center text-green-700 mb-5 border border-green-200">
+              <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center text-green-700 mb-5 border border-green-100">
                 <Cpu className="w-6 h-6" />
               </div>
               <h3 className="font-sans text-lg font-black text-[#00132e] mb-3">
                 Industry-Oriented Projects
               </h3>
               <p className="font-sans text-xs text-[#475569] leading-relaxed mb-6 font-semibold">
-                Ditch academic toy problems. Solve actual system bottlenecks, integrate real-world APIs, design DB schemas, and debug live production apps.
+                Engineer complete live systems instead of toy problems. Architect production applications like the Placement AI Platform and Kaura Hub, integrating real-time telemetry registers, LLM competency routing, and high-performance cloud runtimes.
               </p>
             </div>
-            <span className="font-mono text-[10px] tracking-widest text-green-700 uppercase font-extrabold group-hover:underline">
-              SANDBOX ENVIRONMENT →
-            </span>
+            <div>
+              <span className="inline-block font-mono text-[10px] tracking-widest text-green-700 uppercase font-bold bg-green-50 border border-green-100 px-3 py-1 rounded select-none">
+                SANDBOX ENVIRONMENT
+              </span>
+            </div>
           </motion.div>
 
           {/* Pillar 4 */}
           <motion.div
             whileHover={{ y: -4 }}
-            className="flex flex-col justify-between group p-6 rounded-2xl hover:bg-[#0b1f3b]/5 transition-all duration-300"
+            className="flex flex-col justify-between p-7 rounded-2xl bg-white border border-[#00132e]/10 shadow-sm hover:shadow-md hover:border-purple-500/20 transition-all duration-300"
           >
             <div>
-              <div className="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center text-purple-700 mb-5 border border-purple-200">
+              <div className="w-12 h-12 rounded-xl bg-purple-50 flex items-center justify-center text-purple-700 mb-5 border border-purple-100">
                 <Briefcase className="w-6 h-6" />
               </div>
               <h3 className="font-sans text-lg font-black text-[#00132e] mb-3">
@@ -784,18 +658,20 @@ export default function App() {
                 End-to-end placement readiness: intense Mock Interviews, automated coding rounds, ATS resume generation, and structured system design preparation.
               </p>
             </div>
-            <span className="font-mono text-[10px] tracking-widest text-purple-700 uppercase font-extrabold group-hover:underline">
-              CAREER GATEWAY →
-            </span>
+            <div>
+              <span className="inline-block font-mono text-[10px] tracking-widest text-purple-700 uppercase font-bold bg-purple-50 border border-purple-100 px-3 py-1 rounded select-none">
+                CAREER GATEWAY
+              </span>
+            </div>
           </motion.div>
 
           {/* Pillar 5 */}
           <motion.div
             whileHover={{ y: -4 }}
-            className="flex flex-col justify-between group p-6 rounded-2xl hover:bg-[#0b1f3b]/5 transition-all duration-300"
+            className="flex flex-col justify-between p-7 rounded-2xl bg-white border border-[#00132e]/10 shadow-sm hover:shadow-md hover:border-orange-500/20 transition-all duration-300"
           >
             <div>
-              <div className="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center text-orange-700 mb-5 border border-orange-200">
+              <div className="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center text-orange-700 mb-5 border border-orange-100">
                 <Users className="w-6 h-6" />
               </div>
               <h3 className="font-sans text-lg font-black text-[#00132e] mb-3">
@@ -805,19 +681,21 @@ export default function App() {
                 Enterprise-level training built for active engineering roles. Upgrade staff workflows to handle cloud architectures, AI tools, and DevOps pipelines.
               </p>
             </div>
-            <span className="font-mono text-[10px] tracking-widest text-orange-700 uppercase font-extrabold group-hover:underline">
-              ENTERPRISE UPGRADES →
-            </span>
+            <div>
+              <span className="inline-block font-mono text-[10px] tracking-widest text-orange-700 uppercase font-bold bg-orange-50 border border-orange-100 px-3 py-1 rounded select-none">
+                ENTERPRISE UPGRADES
+              </span>
+            </div>
           </motion.div>
 
           {/* Pillar 6 */}
           <motion.div
             whileHover={{ y: -4 }}
-            className="flex flex-col justify-between group p-6 rounded-2xl hover:bg-[#0b1f3b]/5 transition-all duration-300"
+            className="flex flex-col justify-between p-7 rounded-2xl bg-white border border-[#00132e]/10 shadow-sm hover:shadow-md hover:border-blue-500/20 transition-all duration-300"
           >
             <div>
-              <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center text-blue-700 mb-5 border border-blue-200">
-                <Sparkles className="w-6 h-6" />
+              <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-blue-700 mb-5 border border-blue-100">
+                <Compass className="w-6 h-6" />
               </div>
               <h3 className="font-sans text-lg font-black text-[#00132e] mb-3">
                 Research & Innovation
@@ -826,9 +704,11 @@ export default function App() {
                 Translating concepts into technical realities. Direct mentorship on advanced proof of concepts, custom engineering tools, and hardware-software integrations.
               </p>
             </div>
-            <span className="font-mono text-[10px] tracking-widest text-blue-700 uppercase font-extrabold group-hover:underline">
-              INNOVATION DESK →
-            </span>
+            <div>
+              <span className="inline-block font-mono text-[10px] tracking-widest text-blue-700 uppercase font-bold bg-blue-50 border border-blue-100 px-3 py-1 rounded select-none">
+                INNOVATION DESK
+              </span>
+            </div>
           </motion.div>
 
         </div>
@@ -1120,58 +1000,8 @@ export default function App() {
             </div>
 
           </div>
-
-          {/* New Eetirp Terminal Simulator Interactive Widget addition */}
-          <div className="mt-12 bg-slate-950 rounded-2xl border border-slate-800 shadow-2xl p-6 font-mono text-xs text-slate-200">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-4 mb-4 select-none">
-              <div className="flex items-center gap-2">
-                <Terminal className="w-4 h-4 text-[#04a0e9]" />
-                <span className="font-bold tracking-tight text-sm text-slate-400">eetirp_kernel_shell.sh</span>
-              </div>
-              <div className="flex items-center gap-1.5 text-[10px] text-slate-500 uppercase font-bold tracking-wider">
-                <span className="w-2 h-2 rounded-full bg-emerald-500"></span> Live Telemetry Session
-              </div>
-            </div>
-
-            <div className="space-y-3.5 max-h-64 overflow-y-auto mb-4 pr-2 scrollbar-thin scrollbar-thumb-slate-800">
-              {terminalHistory.map((item, idx) => (
-                <div key={idx} className="space-y-1">
-                  <div className="flex items-center gap-2 text-[#7a3fed] font-bold">
-                    <span>$</span>
-                    <span className="text-slate-300">{item.command}</span>
-                  </div>
-                  <div className={`whitespace-pre-wrap pl-4 leading-relaxed font-semibold ${item.type === 'success' ? 'text-emerald-400' : item.type === 'error' ? 'text-rose-400' : 'text-slate-400'
-                    }`}>
-                    {item.result}
-                  </div>
-                </div>
-              ))}
-              <div ref={terminalBottomRef} />
-            </div>
-
-            <form onSubmit={handleTerminalSubmit} className="flex items-center gap-2 border-t border-slate-900 pt-3">
-              <span className="text-[#04a0e9] font-black select-none">$</span>
-              <input
-                type="text"
-                className="flex-grow bg-transparent border-none outline-none focus:ring-0 text-slate-200 placeholder-slate-700 font-mono tracking-wide"
-                placeholder="Type 'help', 'apps --list', or 'status --telemetry'..."
-                value={terminalInput}
-                onChange={(e) => setTerminalInput(e.target.value)}
-              />
-              <input type="submit" className="hidden" />
-              <button
-                type="submit"
-                className="px-3 py-1 bg-slate-900 border border-slate-800 text-slate-400 rounded hover:text-[#04a0e9] hover:border-[#04a0e9]/30 transition-all font-mono text-[10px] uppercase font-bold"
-              >
-                Execute
-              </button>
-            </form>
-          </div>
-
         </div>
       </section>
-
-
 
       {/* 9. Leadership & Backing Grid panel */}
       <section className="py-24 bg-[#eae6db]/20 border-y border-[#00132e]/10" id="leadership">
@@ -1195,16 +1025,22 @@ export default function App() {
             {/* Kaushal Baitha */}
             <motion.div
               whileHover={{ y: -4 }}
-              className="flex flex-col justify-between p-6 rounded-2xl hover:bg-[#0b1f3b]/5 transition-all duration-300"
+              className="flex flex-col justify-between p-6 rounded-2xl bg-white border border-[#00132e]/10 shadow-sm hover:border-[#7a3fed]/20 hover:shadow-md transition-all duration-300"
             >
               <div>
-                <div className="relative w-14 h-14 rounded-2xl bg-gradient-to-tr from-[#7a3fed] to-indigo-600 flex items-center justify-center text-white font-black text-xl mb-4 border-2 border-white/20 shadow-md">
-                  KB
-                  <span className="absolute -top-1.5 -right-1.5 bg-[#7a3fed] text-white text-[8px] font-mono tracking-wider font-extrabold uppercase px-1.5 py-0.5 rounded-full select-none shadow">CORE</span>
+                <div className="flex items-center gap-4 mb-5">
+                  <div className="w-12 h-12 rounded-xl bg-[#7a3fed]/10 flex items-center justify-center text-[#7a3fed] font-sans font-black text-lg border border-[#7a3fed]/20 select-none">
+                    KB
+                  </div>
+                  <div>
+                    <span className="font-mono text-[9px] tracking-widest text-[#7a3fed] uppercase font-bold bg-[#7a3fed]/10 border border-[#7a3fed]/20 px-2.5 py-1 rounded select-none">
+                      CORE TEAM
+                    </span>
+                  </div>
                 </div>
-                <div className="font-sans text-lg font-black text-[#00132e] mb-1">
+                <h4 className="font-sans text-lg font-black text-[#00132e] mb-1">
                   Kaushal Baitha
-                </div>
+                </h4>
                 <p className="font-mono text-[10px] tracking-wider uppercase text-[#7a3fed] font-black mb-3">
                   FOUNDER & CHIEF ARCHITECT
                 </p>
@@ -1216,7 +1052,7 @@ export default function App() {
                 href="https://kaushalbaitha7.vercel.app/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full py-2.5 bg-white border-2 border-[#00132e]/10 text-[#00132e] font-mono text-[10px] uppercase tracking-widest font-black rounded-lg hover:border-[#7a3fed] hover:text-[#7a3fed] cursor-pointer transition-all text-center block"
+                className="w-full py-2.5 bg-white border border-[#00132e]/10 text-[#00132e] font-mono text-[10px] uppercase tracking-widest font-black rounded-lg hover:border-[#7a3fed] hover:text-[#7a3fed] cursor-pointer transition-all text-center block"
               >
                 Explore Portfolio ↗
               </a>
@@ -1225,16 +1061,22 @@ export default function App() {
             {/* Karthik C M */}
             <motion.div
               whileHover={{ y: -4 }}
-              className="flex flex-col justify-between p-6 rounded-2xl hover:bg-[#0b1f3b]/5 transition-all duration-300"
+              className="flex flex-col justify-between p-6 rounded-2xl bg-white border border-[#00132e]/10 shadow-sm hover:border-[#04a0e9]/20 hover:shadow-md transition-all duration-300"
             >
               <div>
-                <div className="relative w-14 h-14 rounded-2xl bg-gradient-to-tr from-[#04a0e9] to-cyan-600 flex items-center justify-center text-white font-black text-xl mb-4 border-2 border-white/20 shadow-md">
-                  KC
-                  <span className="absolute -top-1 -right-1 bg-[#00132e] text-white text-[9px] px-1 rounded-full font-mono font-black">&lt;/&gt;</span>
+                <div className="flex items-center gap-4 mb-5">
+                  <div className="w-12 h-12 rounded-xl bg-[#04a0e9]/10 flex items-center justify-center text-[#04a0e9] font-sans font-black text-lg border border-[#04a0e9]/20 select-none">
+                    KC
+                  </div>
+                  <div>
+                    <span className="font-mono text-[9px] tracking-widest text-[#04a0e9] uppercase font-bold bg-[#04a0e9]/10 border border-[#04a0e9]/20 px-2.5 py-1 rounded select-none">
+                      OPERATIONS
+                    </span>
+                  </div>
                 </div>
-                <div className="font-sans text-lg font-black text-[#00132e] mb-1">
+                <h4 className="font-sans text-lg font-black text-[#00132e] mb-1">
                   Karthik C M
-                </div>
+                </h4>
                 <p className="font-mono text-[10px] tracking-wider uppercase text-[#04a0e9] font-black mb-3">
                   CO-FOUNDER & HEAD OF OPERATIONS
                 </p>
@@ -1246,7 +1088,7 @@ export default function App() {
                 href="https://karthikcm.vercel.app/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full py-2.5 bg-white border-2 border-[#00132e]/10 text-[#00132e] font-mono text-[10px] uppercase tracking-widest font-black rounded-lg hover:border-[#04a0e9] hover:text-[#04a0e9] cursor-pointer transition-all text-center block"
+                className="w-full py-2.5 bg-white border border-[#00132e]/10 text-[#00132e] font-mono text-[10px] uppercase tracking-widest font-black rounded-lg hover:border-[#04a0e9] hover:text-[#04a0e9] cursor-pointer transition-all text-center block"
               >
                 Explore Portfolio ↗
               </a>
@@ -1255,17 +1097,23 @@ export default function App() {
             {/* Karthik D */}
             <motion.div
               whileHover={{ y: -4 }}
-              className="flex flex-col justify-between p-6 rounded-2xl hover:bg-[#0b1f3b]/5 transition-all duration-300"
+              className="flex flex-col justify-between p-6 rounded-2xl bg-white border border-[#00132e]/10 shadow-sm hover:border-emerald-500/20 hover:shadow-md transition-all duration-300"
             >
               <div>
-                <div className="relative w-14 h-14 rounded-2xl bg-gradient-to-tr from-emerald-500 to-green-600 flex items-center justify-center text-white font-black text-xl mb-4 border-2 border-white/20 shadow-md">
-                  KD
-                  <span className="absolute -top-1.5 -right-1.5 bg-emerald-600 text-white text-[8px] font-mono tracking-wider font-extrabold uppercase px-1.5 py-0.5 rounded-full select-none shadow">PARTNER</span>
+                <div className="flex items-center gap-4 mb-5">
+                  <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-600 font-sans font-black text-lg border border-emerald-500/20 select-none">
+                    KD
+                  </div>
+                  <div>
+                    <span className="font-mono text-[9px] tracking-widest text-emerald-600 uppercase font-bold bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded select-none">
+                      INVESTING
+                    </span>
+                  </div>
                 </div>
-                <div className="font-sans text-lg font-black text-[#00132e] mb-1">
+                <h4 className="font-sans text-lg font-black text-[#00132e] mb-1">
                   Karthik D
-                </div>
-                <p className="font-mono text-[10px] tracking-wider uppercase text-emerald-600 font-black mb-3">
+                </h4>
+                <p className="font-mono text-[10px] tracking-wider uppercase text-emerald-605 font-black mb-3">
                   STRATEGIC INVESTOR
                 </p>
                 <p className="font-sans text-xs text-[#475569] leading-relaxed mb-6 font-semibold">
@@ -1276,7 +1124,7 @@ export default function App() {
                 href="https://karthikd1.vercel.app/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full py-2.5 bg-white border-2 border-[#00132e]/10 text-[#00132e] font-mono text-[10px] uppercase tracking-widest font-black rounded-lg hover:border-emerald-500 hover:text-emerald-600 cursor-pointer transition-all text-center block"
+                className="w-full py-2.5 bg-white border border-[#00132e]/10 text-[#00132e] font-mono text-[10px] uppercase tracking-widest font-black rounded-lg hover:border-emerald-500 hover:text-emerald-600 cursor-pointer transition-all text-center block"
               >
                 Explore Portfolio ↗
               </a>
@@ -1285,17 +1133,23 @@ export default function App() {
             {/* Pritee Kumari Singh */}
             <motion.div
               whileHover={{ y: -4 }}
-              className="flex flex-col justify-between p-6 rounded-2xl hover:bg-[#0b1f3b]/5 transition-all duration-300"
+              className="flex flex-col justify-between p-6 rounded-2xl bg-white border border-[#00132e]/10 shadow-sm hover:border-orange-500/20 hover:shadow-md transition-all duration-300"
             >
               <div>
-                <div className="relative w-14 h-14 rounded-2xl bg-gradient-to-tr from-amber-500 to-orange-600 flex items-center justify-center text-white font-black text-xl mb-4 border-2 border-white/20 shadow-md">
-                  PS
-                  <span className="absolute -top-1.5 -right-1.5 bg-amber-600 text-white text-[8px] font-mono tracking-wider font-extrabold uppercase px-1.5 py-0.5 rounded-full select-none shadow">LEAD</span>
+                <div className="flex items-center gap-4 mb-5">
+                  <div className="w-12 h-12 rounded-xl bg-orange-500/10 flex items-center justify-center text-orange-600 font-sans font-black text-lg border border-orange-500/20 select-none">
+                    PS
+                  </div>
+                  <div>
+                    <span className="font-mono text-[9px] tracking-widest text-orange-600 uppercase font-bold bg-orange-500/10 border border-orange-500/20 px-2.5 py-1 rounded select-none">
+                      STRATEGY
+                    </span>
+                  </div>
                 </div>
-                <div className="font-sans text-lg font-black text-[#00132e] mb-1">
+                <h4 className="font-sans text-lg font-black text-[#00132e] mb-1">
                   Pritee Kumari Singh
-                </div>
-                <p className="font-mono text-[10px] tracking-wider uppercase text-amber-600 font-black mb-3">
+                </h4>
+                <p className="font-mono text-[10px] tracking-wider uppercase text-orange-605 font-black mb-3">
                   MARKETING & STRATEGY LEADER
                 </p>
                 <p className="font-sans text-xs text-[#475569] leading-relaxed mb-6 font-semibold">
@@ -1306,25 +1160,31 @@ export default function App() {
                 href="https://priteesingh.vercel.app/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full py-2.5 bg-white border-2 border-[#00132e]/10 text-[#00132e] font-mono text-[10px] uppercase tracking-widest font-black rounded-lg hover:border-amber-500 hover:text-amber-600 cursor-pointer transition-all text-center block"
+                className="w-full py-2.5 bg-white border border-[#00132e]/10 text-[#00132e] font-mono text-[10px] uppercase tracking-widest font-black rounded-lg hover:border-orange-500 hover:text-orange-600 cursor-pointer transition-all text-center block"
               >
                 Explore Portfolio ↗
               </a>
             </motion.div>
 
-            {/* Rajdev Rana */}
+            {/* Rajdev Rana - Placeholder (you can add URL later) */}
             <motion.div
               whileHover={{ y: -4 }}
-              className="flex flex-col justify-between p-6 rounded-2xl hover:bg-[#0b1f3b]/5 transition-all duration-300"
+              className="flex flex-col justify-between p-6 rounded-2xl bg-white border border-[#00132e]/10 shadow-sm hover:border-blue-500/20 hover:shadow-md transition-all duration-300"
             >
               <div>
-                <div className="relative w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-600 to-sky-600 flex items-center justify-center text-white font-black text-xl mb-4 border-2 border-white/20 shadow-md">
-                  RR
-                  <span className="absolute -top-1.5 -right-1.5 bg-blue-600 text-white text-[8px] font-mono tracking-wider font-extrabold uppercase px-1.5 py-0.5 rounded-full select-none shadow">MGMT</span>
+                <div className="flex items-center gap-4 mb-5">
+                  <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-600 font-sans font-black text-lg border border-blue-500/20 select-none">
+                    RR
+                  </div>
+                  <div>
+                    <span className="font-mono text-[9px] tracking-widest text-blue-600 uppercase font-bold bg-blue-500/10 border border-blue-500/20 px-2.5 py-1 rounded select-none">
+                      MGMT
+                    </span>
+                  </div>
                 </div>
-                <div className="font-sans text-lg font-black text-[#00132e] mb-1">
+                <h4 className="font-sans text-lg font-black text-[#00132e] mb-1">
                   Rajdev Rana
-                </div>
+                </h4>
                 <p className="font-mono text-[10px] tracking-wider uppercase text-blue-650 font-black mb-3">
                   PROJECT COORDINATOR
                 </p>
@@ -1332,27 +1192,32 @@ export default function App() {
                   Streamlines cross-functional workflows and strategic resource management to ensure seamless project execution.
                 </p>
               </div>
-              <a
-                href="#onboarding"
-                className="w-full py-2.5 bg-white border-2 border-blue-500/20 text-blue-600 font-mono text-[10px] uppercase tracking-widest font-black rounded-lg hover:bg-neutral-50 cursor-pointer transition-all flex items-center justify-center gap-1"
+              <button
+                className="w-full py-2.5 bg-white border border-blue-500/20 text-blue-600 font-mono text-[10px] uppercase tracking-widest font-black rounded-lg hover:bg-neutral-50 cursor-pointer transition-all flex items-center justify-center gap-1"
               >
-                <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span> Ecosystem Project Operations
-              </a>
+                <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span> Portfolio Coming Soon
+              </button>
             </motion.div>
 
             {/* Rania Jasmine S */}
             <motion.div
               whileHover={{ y: -4 }}
-              className="flex flex-col justify-between p-6 rounded-2xl hover:bg-[#0b1f3b]/5 transition-all duration-300"
+              className="flex flex-col justify-between p-6 rounded-2xl bg-white border border-[#00132e]/10 shadow-sm hover:border-purple-500/20 hover:shadow-md transition-all duration-300"
             >
               <div>
-                <div className="relative w-14 h-14 rounded-2xl bg-gradient-to-tr from-purple-500 to-pink-600 flex items-center justify-center text-white font-black text-xl mb-4 border-2 border-white/20 shadow-md">
-                  RJ
-                  <span className="absolute -top-1.5 -right-1.5 bg-purple-600 text-white text-[8px] font-mono tracking-wider font-extrabold uppercase px-1.5 py-0.5 rounded-full select-none shadow">DEV</span>
+                <div className="flex items-center gap-4 mb-5">
+                  <div className="w-12 h-12 rounded-xl bg-purple-500/10 flex items-center justify-center text-purple-600 font-sans font-black text-lg border border-purple-500/20 select-none">
+                    RJ
+                  </div>
+                  <div>
+                    <span className="font-mono text-[9px] tracking-widest text-purple-600 uppercase font-bold bg-purple-500/10 border border-purple-500/20 px-2.5 py-1 rounded select-none">
+                      DEV
+                    </span>
+                  </div>
                 </div>
-                <div className="font-sans text-lg font-black text-[#00132e] mb-1">
+                <h4 className="font-sans text-lg font-black text-[#00132e] mb-1">
                   Rania Jasmine S
-                </div>
+                </h4>
                 <p className="font-mono text-[10px] tracking-wider uppercase text-purple-600 font-black mb-3">
                   FULL STACK DEVELOPER
                 </p>
@@ -1364,7 +1229,7 @@ export default function App() {
                 href="https://raniajasmine-s.vercel.app/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full py-2.5 bg-white border-2 border-[#00132e]/10 text-[#00132e] font-mono text-[10px] uppercase tracking-widest font-black rounded-lg hover:border-purple-500 hover:text-purple-600 cursor-pointer transition-all text-center block"
+                className="w-full py-2.5 bg-white border border-[#00132e]/10 text-[#00132e] font-mono text-[10px] uppercase tracking-widest font-black rounded-lg hover:border-purple-500 hover:text-purple-600 cursor-pointer transition-all text-center block"
               >
                 Explore Portfolio ↗
               </a>
@@ -1390,75 +1255,93 @@ export default function App() {
             {/* Raushan Kumar Baitha */}
             <motion.div
               whileHover={{ y: -4 }}
-              className="flex flex-col justify-between p-6 rounded-2xl hover:bg-[#0b1f3b]/5 transition-all duration-300"
+              className="flex flex-col justify-between p-6 rounded-2xl bg-white border border-[#00132e]/10 shadow-sm hover:border-[#7a3fed]/20 hover:shadow-md transition-all duration-300"
             >
               <div>
-                <span className="font-mono text-[9px] tracking-widest text-[#7a3fed] bg-[#7a3fed]/10 border border-[#7a3fed]/20 px-2.5 py-0.5 rounded uppercase font-black mb-4 inline-block">SYSTEMS</span>
-                <div className="relative w-14 h-14 rounded-2xl bg-gradient-to-tr from-[#7a3fed] to-indigo-600 flex items-center justify-center text-white font-black text-xl mb-4 border-2 border-white/20 shadow-sm">
-                  RB
+                <div className="flex items-center gap-4 mb-5">
+                  <div className="w-12 h-12 rounded-xl bg-[#7a3fed]/10 flex items-center justify-center text-[#7a3fed] font-sans font-black text-lg border border-[#7a3fed]/20 select-none">
+                    RB
+                  </div>
+                  <div>
+                    <span className="font-mono text-[9px] tracking-widest text-[#7a3fed] uppercase font-bold bg-[#7a3fed]/10 border border-[#7a3fed]/20 px-2.5 py-1 rounded select-none">
+                      SYSTEMS
+                    </span>
+                  </div>
                 </div>
-                <div className="font-sans text-lg font-black text-[#00132e] mb-1">
+                <h4 className="font-sans text-lg font-black text-[#00132e] mb-1">
                   Raushan Kumar Baitha
-                </div>
+                </h4>
                 <p className="font-mono text-[10px] tracking-wider uppercase text-[#7a3fed] font-black mb-3">
-                  DSA SPECIALIST
+                  TECHNICAL TRAINER & SYSTEMS SPECIALIST
                 </p>
                 <p className="font-sans text-xs text-[#475569] leading-relaxed mb-6 font-semibold">
-                  Empowering developers to master algorithmic problem-solving and ace rigorous technical interviews.
+                  Specializing in systems architecture, deep-dive backend frameworks, database configuration paradigms, and production deployment cycles.
                 </p>
               </div>
-              <div className="w-full py-2 bg-[#0b1f3b]/5 border border-[#00132e]/10 text-[#00132e] font-mono text-[10px] uppercase tracking-widest font-black rounded text-center select-none flex items-center justify-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#7a3fed] animate-pulse"></span> Systems Architecture Node
+              <div className="w-full py-2 bg-[#0b1f3b]/5 border border-[#00132e]/10 text-[#00132e] font-mono text-[10px] uppercase tracking-widest font-black rounded-lg select-none flex items-center justify-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#7a3fed]"></span> Systems Architecture Node
+              </div>
+            </motion.div>
+
+            {/* Anup Tiwari */}
+            <motion.div
+              whileHover={{ y: -4 }}
+              className="flex flex-col justify-between p-6 rounded-2xl bg-white border border-[#00132e]/10 shadow-sm hover:border-[#04a0e9]/20 hover:shadow-md transition-all duration-300"
+            >
+              <div>
+                <div className="flex items-center gap-4 mb-5">
+                  <div className="w-12 h-12 rounded-xl bg-[#04a0e9]/10 flex items-center justify-center text-[#04a0e9] font-sans font-black text-lg border border-[#04a0e9]/20 select-none">
+                    AT
+                  </div>
+                  <div>
+                    <span className="font-mono text-[9px] tracking-widest text-[#04a0e9] uppercase font-bold bg-[#04a0e9]/10 border border-[#04a0e9]/20 px-2.5 py-1 rounded select-none">
+                      ALGORITHMS
+                    </span>
+                  </div>
+                </div>
+                <h4 className="font-sans text-lg font-black text-[#00132e] mb-1">
+                  Anup Tiwari
+                </h4>
+                <p className="font-mono text-[10px] tracking-wider uppercase text-[#04a0e9] font-black mb-3">
+                  TECHNICAL TRAINER & DSA MENTOR
+                </p>
+                <p className="font-sans text-xs text-[#475569] leading-relaxed mb-6 font-semibold">
+                  Mentoring students in complex algorithmic thinking, foundational structures, optimized problem-solving tactics, and software assessment execution.
+                </p>
+              </div>
+              <div className="w-full py-2 bg-[#0b1f3b]/5 border border-[#00132e]/10 text-[#00132e] font-mono text-[10px] uppercase tracking-widest font-black rounded-lg select-none flex items-center justify-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#04a0e9]"></span> DSA & Logic Sprints
               </div>
             </motion.div>
 
             {/* Nirmal Shekhar */}
             <motion.div
               whileHover={{ y: -4 }}
-              className="flex flex-col justify-between p-6 rounded-2xl hover:bg-[#0b1f3b]/5 transition-all duration-300"
+              className="flex flex-col justify-between p-6 rounded-2xl bg-white border border-[#00132e]/10 shadow-sm hover:border-emerald-500/20 hover:shadow-md transition-all duration-300"
             >
               <div>
-                <span className="font-mono text-[9px] tracking-widest text-[#4ea04e] bg-emerald-100/30 border border-green-500/10 px-2.5 py-0.5 rounded uppercase font-black mb-4 inline-block">PLACEMENT</span>
-                <div className="relative w-14 h-14 rounded-2xl bg-gradient-to-tr from-emerald-500 to-indigo-600 flex items-center justify-center text-white font-black text-xl mb-4 border-2 border-white/20 shadow-sm">
-                  NS
+                <div className="flex items-center gap-4 mb-5">
+                  <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-600 font-sans font-black text-lg border border-emerald-500/20 select-none">
+                    NS
+                  </div>
+                  <div>
+                    <span className="font-mono text-[9px] tracking-widest text-emerald-600 uppercase font-bold bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded select-none">
+                      PLACEMENT
+                    </span>
+                  </div>
                 </div>
-                <div className="font-sans text-lg font-black text-[#00132e] mb-1">
+                <h4 className="font-sans text-lg font-black text-[#00132e] mb-1">
                   Nirmal Shekhar
-                </div>
+                </h4>
                 <p className="font-mono text-[10px] tracking-wider uppercase text-emerald-600 font-black mb-3">
-                  DSA AND JAVA EXPERTISE
+                  CAREER EXPERT & PLACEMENT STRATEGIST
                 </p>
                 <p className="font-sans text-xs text-[#475569] leading-relaxed mb-6 font-semibold">
-                  Bridging foundational core Java principles with complex data structure implementations for robust software design.
+                  Guiding candidate roadmap pipelines with interactive mock behavioral drills, ATS criteria matching, and outcome-driven career placement solutions.
                 </p>
               </div>
-              <div className="w-full py-2 bg-[#0b1f3b]/5 border border-[#00132e]/10 text-[#00132e] font-mono text-[10px] uppercase tracking-widest font-black rounded text-center select-none flex items-center justify-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Outcome Strategy Node
-              </div>
-            </motion.div>
-
-            {/* Anup Kumar Tiwari */}
-            <motion.div
-              whileHover={{ y: -4 }}
-              className="flex flex-col justify-between p-6 rounded-2xl hover:bg-[#0b1f3b]/5 transition-all duration-300"
-            >
-              <div>
-                <span className="font-mono text-[9px] tracking-widest text-[#04a0e9] bg-[#04a0e9]/10 border border-[#04a0e9]/20 px-2.5 py-0.5 rounded uppercase font-black mb-4 inline-block">ALGORITHMS</span>
-                <div className="relative w-14 h-14 rounded-2xl bg-gradient-to-tr from-[#04a0e9] to-indigo-600 flex items-center justify-center text-white font-black text-xl mb-4 border-2 border-white/20 shadow-sm">
-                  AT
-                </div>
-                <div className="font-sans text-lg font-black text-[#00132e] mb-1">
-                  Anup Kumar Tiwari
-                </div>
-                <p className="font-mono text-[10px] tracking-wider uppercase text-[#04a0e9] font-black mb-3">
-                  DSA AND FULL STACK DEVELOPER
-                </p>
-                <p className="font-sans text-xs text-[#475569] leading-relaxed mb-6 font-semibold">
-                  A versatile engineer specializing in scalable full-stack architectures and optimized algorithmic workflows.
-                </p>
-              </div>
-              <div className="w-full py-2 bg-[#0b1f3b]/5 border border-[#00132e]/10 text-[#00132e] font-mono text-[10px] uppercase tracking-widest font-black rounded text-center select-none flex items-center justify-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#04a0e9] animate-pulse"></span> DSA & Logic Sprints
+              <div className="w-full py-2 bg-[#0b1f3b]/5 border border-[#00132e]/10 text-[#00132e] font-mono text-[10px] uppercase tracking-widest font-black rounded-lg select-none flex items-center justify-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Outcome Strategy Node
               </div>
             </motion.div>
 
@@ -1582,15 +1465,6 @@ export default function App() {
                       </div>
                     )}
                   </div>
-                </div>
-
-                <div className="p-3.5 bg-indigo-50 border border-indigo-100 rounded-lg text-xs leading-relaxed text-indigo-950 font-sans">
-                  <p className="font-bold mb-1 flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse"></span> Prepared for Backend Integration:
-                  </p>
-                  <p className="text-gray-600 text-[11px]">
-                    This form has successfully triggered a static POST endpoint simulated request to <code className="font-mono bg-white px-1 py-0.5 border border-indigo-100 rounded">/api/onboarding</code>. You can easily plug in your manual web server form action when you implement your custom backend solution!
-                  </p>
                 </div>
 
                 <button
