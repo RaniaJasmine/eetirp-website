@@ -101,10 +101,16 @@ export default function Footer({ scrollSmoothTo }: { scrollSmoothTo: (id: string
         </div>
       </div>
 
-      {/* Global Copyright Section */}
+      {/* Global Copyright Section - UPDATED with working Terms & Privacy links */}
       <div className="max-w-6xl mx-auto mt-16 pt-8 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between text-[10px] font-mono text-gray-500 gap-4 relative z-10">
         <span>© 2026 EETIRP LTD. All rights reserved.</span>
         <div className="flex items-center gap-6">
+          <a href="/terms" className="hover:text-white transition-colors cursor-pointer relative z-20">
+            Terms of Use
+          </a>
+          <a href="/privacy" className="hover:text-white transition-colors cursor-pointer relative z-20">
+            Privacy Policy
+          </a>
           <span className="text-gray-6xl text-[9px] uppercase tracking-widest">CLASSIFIED SECURITY LAYER V3</span>
         </div>
       </div>
