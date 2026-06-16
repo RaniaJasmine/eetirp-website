@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, ChangeEvent, FormEvent } from 'react';
 import Navbar from './components/Navbar';
 import React from 'react';
+import { Analytics } from "@vercel/analytics/next"
 import EetirpLogo from './components/EetirpLogo';
 import { motion, AnimatePresence } from 'motion/react';
 import {
