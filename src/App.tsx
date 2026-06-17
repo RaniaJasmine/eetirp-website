@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, ChangeEvent, FormEvent } from 'react';
 import Navbar from './components/Navbar';
-import { Routes, Route } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
 import EetirpLogo from './components/EetirpLogo';
@@ -123,6 +123,20 @@ const programPillars = [
 ];
 
 export default function App() {
+  const location = useLocation();
+  const isTerms = location.pathname === '/terms';
+  const isPrivacy = location.pathname === '/privacy';
+
+  // If on Terms page, render Terms component
+  if (isTerms) {
+    return <Terms />;
+  }
+
+  // If on Privacy page, render Privacy component
+  if (isPrivacy) {
+    return <Privacy />;
+  }
+
   const logoUrl = 'https://lh3.googleusercontent.com/aida-public/AB6AXuA0Tb6eZNPswTOWvOMp-_Cr62CASvc3c1--t-f0c7jsDTf3DDa7VXGVV11ESxGD_HPDFE6RpScmJ370lwrrXmeazaZQYIj8m7hn0bJnYSqk3_XU5Dcss9V5eW-P-xrSNI2qfpfd9ie5Xo4uoeJkjFjwkdZpiCEgEQwCCuNfJ2qP6w02tLoQGSCGsEMAaHgvSpakzfOeNKfmFZIVxuo120cSRST7WO0Yiycj1foar3k9F_g1CBYb24k1YjOVtZMW5K-7OamqD3AzPLU';
 
   const scrollSmoothTo = (elementId: string) => {
@@ -1492,15 +1506,14 @@ export default function App() {
                 </button>
 
                 <div className="text-center pt-2">
-                  <span className="font-sans text-[10px] text-[#6f8faf]">
-                    Prefer to send a direct message through your email app?
-                  </span>
                   <div className="mt-2 text-center">
                     <a
-                      href="mailto:eetirpltd@gmail.com?subject=EETIRP Onboarding Query"
-                      className="inline-flex items-center gap-1.5 px-4 py-2 border border-[#1a3a5a] text-[#6f8faf] font-mono text-[10px] uppercase font-bold tracking-widest rounded hover:bg-[#1a3a5a]"
+                      href="https://mail.google.com/mail/?view=cm&fs=1&to=eetirpltd@gmail.com&su=EETIRP%20Onboarding%20Query&body=Hi%20EETIRP%20Team%2C%0A%0AI%20am%20interested%20in%20joining%20the%20ecosystem.%0A%0AName%3A%20%0AEmail%3A%20%0AProfile%3A%20%0AQuery%3A%20%0A%0AThank%20you!"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 px-4 py-2 border border-[#1a3a5a] text-[#6f8faf] font-mono text-[10px] uppercase font-bold tracking-widest rounded hover:bg-[#1a3a5a] hover:text-white transition-all"
                     >
-                      <Mail className="w-3.5 h-3.5" /> Click here to send direct Email
+                      <Mail className="w-3.5 h-3.5" /> Prefer to send direct email?
                     </a>
                   </div>
                 </div>
