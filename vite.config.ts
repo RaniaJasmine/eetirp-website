@@ -12,9 +12,27 @@ export default defineConfig(() => {
       },
     },
     server: {
-      // No proxy needed - API calls go directly to /api
+      // ADDED: Dev-server API proxy matching the updated port of Express
+      proxy: {
+        '/api': {
+          target: 'http://localhost:5000',
+          changeOrigin: true,
+          secure: false,
+        },
+      },
+      // HMR is disabled in AI Studio via DISABLE_HMR env var.
+      // Do not modify—file watching is disabled to prevent flickering during agent edits.
       hmr: process.env.DISABLE_HMR !== 'true',
+      // Disable file watching when DISABLE_HMR is true to save CPU during agent edits.
       watch: process.env.DISABLE_HMR === 'true' ? null : {},
+    },
+    // ADD THIS: Build configuration for proper routing
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: undefined,
+        },
+      },
     },
   };
 });
