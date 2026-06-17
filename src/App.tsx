@@ -1068,8 +1068,7 @@ export default function App() {
                   Karthik D
                 </h4>
                 <p className="font-mono text-[10px] tracking-wider uppercase text-[#1a4a8a] font-black mb-3">
-                  STRATEGIC INVESTOR
-                </p>
+                  STRATEGIC INVESTOR                </p>
                 <p className="font-sans text-sm text-[#4a6a8f] leading-relaxed mb-6 font-medium">
                   Sourcing strategic growth capital, industrial partnerships, and scaling market pipelines for in-house studio SaaS platforms.
                 </p>
