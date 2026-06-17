@@ -1,480 +1,722 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
-  Menu,
   X,
-  Terminal,
-  Monitor,
+  Home,
   Compass,
-  Send,
-  Search,
-  Cpu,
-  HardDrive,
+  Monitor,
   Layers,
-  Activity,
   Users,
-  CheckCircle2,
-  Calendar,
-  Sparkles,
-  ArrowRight,
-  Briefcase,
-  BookOpen,
-  Code2,
-  Rocket
+  Send,
+  LogIn,
+  UserPlus,
+  LogOut,
+  ChevronRight,
+  Mail,
+  Phone,
+  AlertCircle,
+  CheckCircle,
+  MailCheck
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import EetirpLogo from './EetirpLogo';
+import { supabase } from '../lib/supabase';
 
-interface SearchItem {
-  title: string;
-  category: string;
-  desc: string;
-  targetId: string;
-  projectId?: 'placement' | 'kaura' | 'studio';
-  icon: React.ComponentType<any>;
-  keywords: string[];
-}
+// Auth modal states
+type AuthMode = 'login' | 'register' | null;
 
 export default function Navbar() {
-  const [scrolled, setScrolled] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [hasActiveToken, setHasActiveToken] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [authMode, setAuthMode] = useState<AuthMode>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [showConfirmationMessage, setShowConfirmationMessage] = useState(false);
+  const [registeredEmail, setRegisteredEmail] = useState('');
 
-  // Notice ticker
-  const notices = [
-    { text: "COHORT 2026: Systems & Advanced Web Engineering tracks are now open.", badge: "COHORT", color: "text-[#abd2fa] border-[#17366b]/40 bg-[#17366b]/25" },
-    { text: "SAAS LABS: Launch and run automated telemetry diagnostics via sandbox.", badge: "SANDBOX", color: "text-[#7da7f0] border-[#3d70d9]/30 bg-[#3d70d9]/10" },
-    { text: "INCUBATOR: Roster is currently at 92% active capacity this cycle.", badge: "NEWS", color: "text-white border-[#7da7f0]/20 bg-[#17366b]/20" },
-    { text: "INTEGRATION: Interactive diagnostic Git callback tokens verified.", badge: "SECURITY", color: "text-[#7da7f0] border-[#17366b]/25 bg-[#050e21]/30" },
-  ];
+  // Auth form states
+  const [loginData, setLoginData] = useState({ email: '', password: '' });
+  const [registerData, setRegisterData] = useState({
+    fullName: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    role: 'student'
+  });
 
-  const [currentNotice, setCurrentNotice] = useState(0);
-  const [isHovered, setIsHovered] = useState(false);
+  const sidebarTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const sidebarRef = useRef<HTMLDivElement>(null);
 
-  // Search state
-  const [searchQuery, setSearchQuery] = useState('');
-  const [isSearchFocused, setIsSearchFocused] = useState(false);
-  const searchContainerRef = useRef<HTMLDivElement>(null);
-  const searchInputRef = useRef<HTMLInputElement>(null);
-
-  // Search items
-  const searchItems: SearchItem[] = [
-    {
-      title: 'Our Positioning Manifesto',
-      category: 'Curriculum Strategy',
-      desc: 'Our fundamental thesis mapping college theories to engineering teams.',
-      targetId: 'positioning',
-      icon: Compass,
-      keywords: ['positioning', 'manifesto', 'academy', 'academics', 'why us', 'learning', 'corporate', 'thesis']
-    },
-    {
-      title: 'SaaS Sandbox & Live Projects',
-      category: 'Operational Labs',
-      desc: 'Active production environment with telemetry, systems, and repositories.',
-      targetId: 'services',
-      icon: Monitor,
-      keywords: ['services', 'saas', 'lab', 'diagnose', 'telemetry', 'sandbox', 'apps', 'systems', 'projects']
-    },
-    {
-      title: '6 Key Program Pillars',
-      category: 'Methodologies',
-      desc: 'Academy, Sprints, Sandbox Telemetry, and Placement Prep Gateway Tracks.',
-      targetId: 'pillars',
-      icon: Layers,
-      keywords: ['pillars', 'curriculum', 'sprint', 'academy', 'career', 'structure', 'bootcamp', 'innovation']
-    },
-    {
-      title: 'Leadership & Ecosystem Drivers',
-      category: 'Leadership & Backing',
-      desc: 'Tech mentors, enterprise sponsors, and founders driving success.',
-      targetId: 'leadership',
-      icon: Users,
-      keywords: ['leadership', 'advisors', 'experts', 'team', 'backing', 'sponsors', 'mentors']
-    },
-    {
-      title: 'Placement AI Platform',
-      category: 'Active Project',
-      desc: 'AI-driven engine for predictive assessments and interview prep.',
-      targetId: 'services',
-      projectId: 'placement',
-      icon: Cpu,
-      keywords: ['placement', 'ai', 'predictive', 'resume', 'interviews', 'assessments', 'ml', 'scoring']
-    },
-    {
-      title: 'Kaura Hub Portal',
-      category: 'Active Project',
-      desc: 'Next-gen workspace with notes, portfolio, and student tools.',
-      targetId: 'services',
-      projectId: 'kaura',
-      icon: HardDrive,
-      keywords: ['kaura', 'hub', 'notes', 'workspace', 'portfolio', 'builder', 'student']
-    },
-    {
-      title: 'Live Studio Integration',
-      category: 'Active Project',
-      desc: 'Cloud repository tracking with real-time telemetry and latency.',
-      targetId: 'services',
-      projectId: 'studio',
-      icon: Activity,
-      keywords: ['studio', 'integration', 'git', 'operations', 'telemetry', 'real-time', 'cloud', 'latency']
-    },
-    {
-      title: 'Join the Ecosystem',
-      category: 'Admission Portal',
-      desc: 'Claim your slot for the 2026 cohort and start your journey.',
-      targetId: 'onboarding',
-      icon: Send,
-      keywords: ['onboarding', 'join', 'admission', 'apply', 'cohort', 'form', 'career']
-    }
-  ];
-
-  const filteredResults = searchQuery.trim() === ''
-    ? []
-    : searchItems.filter(item =>
-      item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.desc.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.keywords.some(kw => kw.toLowerCase().includes(searchQuery.toLowerCase()))
-    );
-
+  // Check current session on mount
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50);
-    const checkActiveSession = () => setHasActiveToken(!!localStorage.getItem('eetirp_diagnostic_onboarding'));
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-        e.preventDefault();
-        searchInputRef.current?.focus();
-      }
-      if (e.key === 'Escape') {
-        setIsSearchFocused(false);
-        searchInputRef.current?.blur();
-      }
-    };
-
-    const handleClickOutside = (e: MouseEvent) => {
-      if (searchContainerRef.current && !searchContainerRef.current.contains(e.target as Node)) {
-        setIsSearchFocused(false);
+    const getSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        setIsLoggedIn(true);
+        setUser(session.user);
+        localStorage.setItem('eetirp_user', JSON.stringify({
+          id: session.user.id,
+          email: session.user.email,
+          name: session.user.user_metadata?.full_name || session.user.email?.split('@')[0],
+          role: session.user.user_metadata?.role || 'student'
+        }));
       }
     };
+    getSession();
 
-    window.addEventListener('scroll', handleScroll);
-    window.addEventListener('storage', checkActiveSession);
-    window.addEventListener('keydown', handleKeyDown);
-    document.addEventListener('mousedown', handleClickOutside);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        setIsLoggedIn(true);
+        setUser(session.user);
+        localStorage.setItem('eetirp_user', JSON.stringify({
+          id: session.user.id,
+          email: session.user.email,
+          name: session.user.user_metadata?.full_name || session.user.email?.split('@')[0],
+          role: session.user.user_metadata?.role || 'student'
+        }));
+        setShowConfirmationMessage(false);
+      } else {
+        setIsLoggedIn(false);
+        setUser(null);
+        localStorage.removeItem('eetirp_user');
+      }
+    });
 
-    checkActiveSession();
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('storage', checkActiveSession);
-      window.removeEventListener('keydown', handleKeyDown);
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
+    return () => subscription.unsubscribe();
   }, []);
 
+  // Sidebar handlers
+  const handleSidebarEnter = () => {
+    if (sidebarTimeoutRef.current) {
+      clearTimeout(sidebarTimeoutRef.current);
+      sidebarTimeoutRef.current = null;
+    }
+    setSidebarOpen(true);
+  };
+
+  const handleSidebarLeave = () => {
+    if (!('ontouchstart' in window)) {
+      sidebarTimeoutRef.current = setTimeout(() => {
+        setSidebarOpen(false);
+      }, 300);
+    }
+  };
+
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
+
+  // Login handler with Supabase
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    setSuccessMessage(null);
+    setShowConfirmationMessage(false);
+
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: loginData.email,
+        password: loginData.password,
+      });
+
+      if (error) {
+        if (error.message.includes('Email not confirmed')) {
+          setError('Please confirm your email address first. Check your inbox for the confirmation link.');
+        } else {
+          throw error;
+        }
+        setLoading(false);
+        return;
+      }
+
+      setSuccessMessage('Login successful! Welcome back!');
+      setIsLoggedIn(true);
+      setUser(data.user);
+      setAuthMode(null);
+      setSidebarOpen(false);
+      setLoginData({ email: '', password: '' });
+
+      localStorage.setItem('eetirp_user', JSON.stringify({
+        id: data.user.id,
+        email: data.user.email,
+        name: data.user.user_metadata?.full_name || data.user.email?.split('@')[0],
+        role: data.user.user_metadata?.role || 'student'
+      }));
+
+    } catch (err: any) {
+      setError(err.message || 'Login failed. Please check your credentials.');
+      console.error('Login error:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Register handler with Supabase
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    setSuccessMessage(null);
+    setShowConfirmationMessage(false);
+
+    if (registerData.password !== registerData.confirmPassword) {
+      setError('Passwords do not match!');
+      setLoading(false);
+      return;
+    }
+
+    if (registerData.password.length < 6) {
+      setError('Password must be at least 6 characters long.');
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email: registerData.email,
+        password: registerData.password,
+        options: {
+          data: {
+            full_name: registerData.fullName,
+            role: registerData.role,
+          },
+        },
+      });
+
+      if (error) throw error;
+
+      // Store the email for the confirmation message
+      setRegisteredEmail(registerData.email);
+
+      // Show confirmation message
+      setShowConfirmationMessage(true);
+      setSuccessMessage(null);
+
+      // Clear form
+      setRegisterData({
+        fullName: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+        role: 'student'
+      });
+
+      // Don't close the modal - show the confirmation message instead
+
+    } catch (err: any) {
+      setError(err.message || 'Registration failed. Please try again.');
+      console.error('Registration error:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Logout handler
+  const handleLogout = async () => {
+    try {
+      await supabase.auth.signOut();
+      setIsLoggedIn(false);
+      setUser(null);
+      localStorage.removeItem('eetirp_user');
+      setSidebarOpen(false);
+    } catch (err: any) {
+      console.error('Logout error:', err);
+    }
+  };
+
+  // Scroll to contact section
+  const scrollToContact = () => {
+    const element = document.getElementById('onboarding');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    setSidebarOpen(false);
+  };
+
+  // Resend confirmation email
+  const resendConfirmation = async () => {
+    setLoading(true);
+    setError(null);
+    setSuccessMessage(null);
+
+    try {
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email: registeredEmail,
+      });
+
+      if (error) throw error;
+
+      setSuccessMessage(`Confirmation email resent to ${registeredEmail}. Please check your inbox.`);
+    } catch (err: any) {
+      setError(err.message || 'Failed to resend confirmation email. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    if (isHovered || isSearchFocused) return;
-    const interval = setTimeout(() => {
-      setCurrentNotice((prev) => (prev + 1) % notices.length);
-    }, 3800);
-    return () => clearTimeout(interval);
-  }, [isHovered, isSearchFocused, currentNotice, notices.length]);
+    const handleClickOutside = (e: MouseEvent) => {
+      if (sidebarRef.current && !sidebarRef.current.contains(e.target as Node) && !(e.target as Element).closest('.sidebar-trigger')) {
+        setSidebarOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const scrollSmoothTo = (elementId: string) => {
-    setMobileMenuOpen(false);
-    setIsSearchFocused(false);
+    setSidebarOpen(false);
     const element = document.getElementById(elementId);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   };
 
-  const handleResultClick = (item: SearchItem) => {
-    setIsSearchFocused(false);
-    setSearchQuery('');
-    scrollSmoothTo(item.targetId);
-    if (item.projectId) {
-      window.dispatchEvent(new CustomEvent('select-project', { detail: item.projectId }));
+  // Sidebar navigation items
+  const sidebarNavItems = [
+    { icon: Home, label: 'Home', action: () => window.scrollTo({ top: 0, behavior: 'smooth' }) },
+    { icon: Compass, label: 'About', action: () => scrollSmoothTo('positioning') },
+    { icon: Monitor, label: 'Projects', action: () => scrollSmoothTo('services') },
+    { icon: Layers, label: 'Pillars', action: () => scrollSmoothTo('pillars') },
+    { icon: Users, label: 'Leadership', action: () => scrollSmoothTo('leadership') },
+    { icon: Send, label: 'Join Us', action: () => scrollSmoothTo('onboarding') },
+  ];
+
+  const getUserName = () => {
+    const stored = localStorage.getItem('eetirp_user');
+    if (stored) {
+      try {
+        const data = JSON.parse(stored);
+        return data.name || data.email?.split('@')[0] || 'User';
+      } catch {
+        return user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User';
+      }
     }
+    return user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User';
+  };
+
+  const getUserInitial = () => {
+    const name = getUserName();
+    return name.charAt(0).toUpperCase();
   };
 
   return (
     <>
-      {/* Fixed Logo - Rich Blue Theme */}
-      <div
-        onClick={() => {
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-          setIsSearchFocused(false);
-        }}
-        className="fixed top-4 left-4 sm:top-5 sm:left-6 lg:top-6 lg:left-8 z-[120] flex items-center gap-3.5 group cursor-pointer select-none bg-[#050c20]/95 backdrop-blur-md border border-[#3d518c]/75 px-4 py-2.5 rounded-2xl shadow-xl hover:scale-[1.02] hover:border-[#7692ff]/85 hover:shadow-[0_0_20px_rgba(118,146,255,0.12)] transition-all duration-300"
-      >
-        <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-[#7692ff]/50 rounded-tl-xl group-hover:border-[#7692ff] transition-colors" />
-        <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-[#7692ff]/50 rounded-br-xl group-hover:border-[#7692ff] transition-colors" />
+      {/* Fixed Logo - Only sidebar trigger remains */}
+      <div className="fixed top-4 left-4 sm:top-5 sm:left-6 lg:top-6 lg:left-8 z-[120] flex items-center gap-3 group cursor-pointer select-none bg-[#0a1628]/95 backdrop-blur-md border border-[#1a3a5a] px-4 py-2.5 rounded-2xl shadow-lg hover:shadow-xl hover:border-[#4a6a8f]/50 transition-all duration-300 sidebar-trigger">
+        <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-[#4a6a8f]/30 rounded-tl-xl group-hover:border-[#6f8faf] transition-colors" />
+        <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-[#4a6a8f]/30 rounded-br-xl group-hover:border-[#6f8faf] transition-colors" />
 
-        <div className="w-10 h-10 rounded-xl overflow-hidden border border-[#17366b]/60 flex items-center justify-center p-1 bg-white shadow-xl shrink-0 relative">
-          <EetirpLogo className="w-full h-full" showSlogan={false} isAnimated={false} />
-          <div className="absolute inset-0 bg-[#3d70d9]/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+        {/* Three-line hamburger - Sidebar trigger */}
+        <div
+          className="flex flex-col gap-1.5 cursor-pointer p-1.5 hover:bg-[#1a3a5a] rounded-lg transition-all sidebar-trigger"
+          onMouseEnter={handleSidebarEnter}
+          onClick={toggleSidebar}
+          onTouchStart={toggleSidebar}
+        >
+          <span className="w-5 h-0.5 bg-[#b0c4d8] rounded-full transition-all"></span>
+          <span className="w-5 h-0.5 bg-[#b0c4d8] rounded-full transition-all"></span>
+          <span className="w-5 h-0.5 bg-[#b0c4d8] rounded-full transition-all"></span>
         </div>
 
-        <div className="flex flex-col leading-none">
-          <div className="flex items-center gap-1.5">
-            <span className="font-sans text-sm font-black tracking-widest text-[#f5f7fa] group-hover:text-[#7da7f0] transition-colors uppercase">
-              EETIRP
-            </span>
-            <span className="w-1.5 h-1.5 rounded-full bg-[#3d70d9] shadow-[0_0_8px_rgba(61,112,217,0.85)] animate-pulse" title="System Live" />
+        {/* Logo */}
+        <div
+          className="flex items-center gap-2.5 cursor-pointer"
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        >
+          <div className="w-9 h-9 rounded-xl overflow-hidden border border-[#1a3a5a] flex items-center justify-center p-1 bg-white shadow-sm shrink-0 relative">
+            <EetirpLogo className="w-full h-full" showSlogan={false} isAnimated={false} />
           </div>
-          <span className="font-mono text-[8px] tracking-[0.22em] text-[#abd2fa]/85 font-extrabold uppercase mt-1 leading-none">
-            Hybrid Tech Studio
-          </span>
+
+          <div className="flex flex-col leading-none max-sm:hidden">
+            <div className="flex items-center gap-1.5">
+              <span className="font-sans text-sm font-black tracking-widest text-white group-hover:text-[#6f8faf] transition-colors uppercase">
+                EETIRP
+              </span>
+              <span className="w-1.5 h-1.5 rounded-full bg-[#4a6a8f] shadow-[0_0_8px_rgba(74,106,143,0.5)]" title="System Live" />
+            </div>
+            <span className="font-mono text-[8px] tracking-[0.22em] text-[#6f8faf] font-extrabold uppercase mt-1 leading-none">
+              Hybrid Tech Studio
+            </span>
+          </div>
         </div>
       </div>
 
-      {/* Main Navigation */}
-      <nav className="fixed top-0 inset-x-0 lg:left-[290px] xl:left-[315px] z-[100] p-4 sm:p-5 lg:pr-8 xl:pr-12 transition-all duration-300 max-lg:pt-[84px]">
-        <div
-          className={`mx-auto max-w-full rounded-2xl bg-[#09153a]/90 backdrop-blur-md border transition-all duration-500 ${scrolled || mobileMenuOpen || isSearchFocused
-              ? 'py-3 px-5 sm:px-6 md:px-8 shadow-2xl border-[#3d518c]'
-              : 'py-4 px-6 md:px-10 shadow-lg border-[#3d518c]/40'
-            }`}
-        >
-          <div className="flex items-center justify-between gap-4">
-
-            {/* SEARCH BAR - Main feature */}
-            <div
-              ref={searchContainerRef}
-              className="relative flex-grow max-w-[240px] sm:max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl h-11"
-            >
-              <div
-                className={`flex items-center h-full w-full bg-[#040a1c]/75 border px-3.5 rounded-xl transition-all duration-300 shadow-inner group ${isSearchFocused
-                    ? 'border-[#7692ff] bg-[#040a1c] shadow-[0_0_15px_rgba(118,146,255,0.08)]'
-                    : 'border-[#3d518c]/70 hover:border-[#7692ff]/60 hover:bg-[#040a1c]/90'
-                  }`}
-              >
-                <Search className={`w-4 h-4 transition-colors ${isSearchFocused ? 'text-[#7692ff]' : 'text-[#abd2fa]'}`} />
-                <input
-                  ref={searchInputRef}
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  onFocus={() => setIsSearchFocused(true)}
-                  placeholder="Search sections... [Ctrl+K]"
-                  className="w-full bg-transparent border-none text-white text-xs font-mono pl-3 pr-2 focus:outline-none placeholder-gray-400 font-semibold"
-                />
-
-                {searchQuery && (
-                  <button
-                    onClick={() => { setSearchQuery(''); searchInputRef.current?.focus(); }}
-                    className="p-1 hover:bg-[#3d518c]/30 rounded-full text-gray-400 hover:text-white transition-all"
-                  >
-                    <X className="w-3 h-3" />
-                  </button>
-                )}
-
-                <div className="hidden sm:flex items-center gap-1 px-1.5 py-0.5 rounded bg-[#3d518c]/30 border border-[#3d518c]/50 text-[9px] font-mono text-gray-400 select-none">
-                  <span>⌘</span>
-                  <span>K</span>
+      {/* Sidebar Navigation - Opens on hover/tap of three lines */}
+      <AnimatePresence>
+        {sidebarOpen && (
+          <motion.div
+            ref={sidebarRef}
+            initial={{ x: -320, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: -320, opacity: 0 }}
+            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+            className="fixed top-0 left-0 w-[280px] sm:w-72 h-full bg-[#0a1628] border-r border-[#1a3a5a] shadow-2xl z-[150] overflow-y-auto"
+            onMouseEnter={handleSidebarEnter}
+            onMouseLeave={handleSidebarLeave}
+          >
+            {/* Sidebar Header */}
+            <div className="p-4 sm:p-6 border-b border-[#1a3a5a]">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-white flex items-center justify-center p-1 border border-[#1a3a5a]">
+                    <EetirpLogo className="w-full h-full" showSlogan={false} isAnimated={false} />
+                  </div>
+                  <div>
+                    <span className="font-sans text-sm sm:text-base font-black text-white block">EETIRP</span>
+                    <span className="font-mono text-[7px] sm:text-[8px] text-[#6f8faf] tracking-widest">STUDIO v2.0</span>
+                  </div>
                 </div>
+                <button
+                  onClick={() => setSidebarOpen(false)}
+                  className="p-1.5 sm:p-2 hover:bg-[#1a3a5a] rounded-lg transition-all"
+                >
+                  <X className="w-4 h-4 sm:w-5 sm:h-5 text-[#6f8faf]" />
+                </button>
               </div>
 
-              {/* Search Dropdown */}
-              <AnimatePresence>
-                {isSearchFocused && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10, scale: 0.98 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 10, scale: 0.98 }}
-                    transition={{ duration: 0.2 }}
-                    className="absolute top-13 left-0 right-0 max-h-[380px] overflow-y-auto bg-[#070f2b]/95 backdrop-blur-xl border border-[#3d518c] rounded-2xl shadow-2xl z-[150] p-4 space-y-3 font-sans text-left"
+              {/* User Status - Supabase Integrated */}
+              {isLoggedIn ? (
+                <div className="mt-3 sm:mt-4 p-2.5 sm:p-3 bg-[#1a3a5a] rounded-lg sm:rounded-xl">
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#4a6a8f] flex items-center justify-center text-white font-bold text-xs sm:text-sm">
+                      {getUserInitial()}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs sm:text-sm font-bold text-white truncate">
+                        {getUserName()}
+                      </p>
+                      <p className="text-[10px] sm:text-xs text-[#6f8faf] truncate">
+                        {user?.email || 'Student'}
+                      </p>
+                    </div>
+                    <button
+                      onClick={handleLogout}
+                      className="p-1.5 sm:p-2 hover:bg-[#0d1f33] rounded-lg transition-all"
+                      title="Logout"
+                    >
+                      <LogOut className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#6f8faf]" />
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="mt-3 sm:mt-4 grid grid-cols-2 gap-1.5 sm:gap-2">
+                  <button
+                    onClick={() => { setAuthMode('login'); setSidebarOpen(false); }}
+                    className="flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 bg-[#4a6a8f] text-white font-mono text-[10px] sm:text-xs font-bold rounded-lg hover:bg-[#6f8faf] transition-all"
                   >
-                    {searchQuery.trim() === '' ? (
-                      <>
-                        {/* Live Notice Ticker */}
-                        <div className="p-3 bg-[#09153f]/60 rounded-xl border border-[#3d518c]/40">
-                          <div className="flex items-center gap-2 mb-1.5">
-                            <span className="w-1.5 h-1.5 rounded-full bg-[#7da7f0] animate-pulse" />
-                            <span className="text-[9px] font-mono font-black text-[#abd2fa] tracking-wider uppercase">
-                              LIVE STATUS
-                            </span>
-                          </div>
-                          <div className="h-6 overflow-hidden relative">
-                            <AnimatePresence mode="wait">
-                              <motion.p
-                                key={currentNotice}
-                                initial={{ opacity: 0, x: 10 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                exit={{ opacity: 0, x: -10 }}
-                                transition={{ duration: 0.25 }}
-                                className="font-sans text-[11px] font-semibold text-gray-200"
-                              >
-                                {notices[currentNotice].text}
-                              </motion.p>
-                            </AnimatePresence>
-                          </div>
-                          <div className="flex gap-1.5 mt-1.5">
-                            {notices.map((_, idx) => (
-                              <button
-                                key={idx}
-                                onClick={() => setCurrentNotice(idx)}
-                                className={`w-1.5 h-1.5 rounded-full transition-all ${currentNotice === idx ? 'bg-[#7692ff] w-3' : 'bg-[#3d518c]/70 hover:bg-[#7692ff]/50'
-                                  }`}
-                              />
-                            ))}
-                          </div>
-                        </div>
+                    <LogIn className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                    Login
+                  </button>
+                  <button
+                    onClick={() => { setAuthMode('register'); setSidebarOpen(false); }}
+                    className="flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 bg-[#1a3a5a] border border-[#1a3a5a] text-white font-mono text-[10px] sm:text-xs font-bold rounded-lg hover:border-[#4a6a8f] hover:bg-[#0d1f33] transition-all"
+                  >
+                    <UserPlus className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                    Register
+                  </button>
+                </div>
+              )}
+            </div>
 
-                        {/* Quick Links */}
-                        <div className="space-y-2">
-                          <h6 className="font-mono text-[9px] text-gray-400 tracking-widest font-black uppercase flex items-center gap-1 px-1">
-                            <Sparkles className="w-3 h-3 text-[#abd2fa]" /> Quick Access
-                          </h6>
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                            {searchItems.slice(0, 4).map((item, idx) => {
-                              const IconComponent = item.icon;
-                              return (
-                                <button
-                                  key={idx}
-                                  onClick={() => handleResultClick(item)}
-                                  className="flex items-center gap-2.5 p-2 px-3 rounded-lg bg-[#091540]/30 hover:bg-[#1b2cc1]/20 border border-[#3d518c]/30 hover:border-[#7692ff]/50 text-left transition-all group"
-                                >
-                                  <IconComponent className="w-4 h-4 text-[#abd2fa] shrink-0" />
-                                  <div>
-                                    <p className="text-[11px] font-bold text-white leading-tight font-mono">{item.title}</p>
-                                    <p className="text-[9px] text-gray-400 truncate">{item.category}</p>
-                                  </div>
-                                  <ArrowRight className="w-3 h-3 text-[#3d518c] ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
-                                </button>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      </>
+            {/* Navigation Items */}
+            <div className="p-3 sm:p-4 space-y-1">
+              <p className="font-mono text-[8px] sm:text-[9px] text-[#6f8faf] uppercase tracking-widest font-black px-2 sm:px-3 py-1 sm:py-2">Main Navigation</p>
+              {sidebarNavItems.map((item, index) => {
+                const Icon = item.icon;
+                return (
+                  <button
+                    key={index}
+                    onClick={item.action}
+                    className="w-full flex items-center gap-2 sm:gap-3 px-2 sm:px-3 py-2 sm:py-2.5 rounded-lg sm:rounded-xl hover:bg-[#1a3a5a] transition-all group text-left"
+                  >
+                    <Icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#6f8faf] group-hover:text-white transition-colors" />
+                    <span className="text-xs sm:text-sm font-medium text-[#b0c4d8] group-hover:text-white transition-colors">
+                      {item.label}
+                    </span>
+                    <ChevronRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#1a3a5a] ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Contact Button */}
+            <div className="border-t border-[#1a3a5a] p-3 sm:p-4 mt-1 sm:mt-2">
+              <button
+                onClick={scrollToContact}
+                className="w-full flex items-center justify-center gap-1.5 sm:gap-2 py-2.5 sm:py-3 bg-[#4a6a8f] hover:bg-[#6f8faf] text-white font-mono text-[10px] sm:text-xs uppercase tracking-widest font-bold rounded-lg transition-all"
+              >
+                <Mail className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                Contact Us
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Auth Modal - Login/Register with Supabase */}
+      <AnimatePresence>
+        {authMode && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-[#0a1628]/80 backdrop-blur-sm z-[200] flex items-center justify-center p-3 sm:p-4"
+            onClick={() => setAuthMode(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.95, y: 20 }}
+              className="bg-[#0a1628] rounded-2xl max-w-md w-full p-4 sm:p-6 md:p-8 shadow-2xl border border-[#1a3a5a] max-h-[90vh] overflow-y-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Modal Header */}
+              <div className="flex items-center justify-between mb-4 sm:mb-6">
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-[#1a3a5a] flex items-center justify-center">
+                    {authMode === 'login' ? (
+                      <LogIn className="w-4 h-4 sm:w-5 sm:h-5 text-[#6f8faf]" />
                     ) : (
-                      /* Search Results */
-                      <div className="space-y-1.5">
-                        <div className="flex justify-between items-center px-1 mb-2 font-mono text-[9px] text-gray-400 font-bold uppercase tracking-wider">
-                          <span>Results</span>
-                          <span>{filteredResults.length} matches</span>
-                        </div>
-
-                        {filteredResults.length > 0 ? (
-                          filteredResults.map((item, index) => {
-                            const IconComponent = item.icon;
-                            return (
-                              <button
-                                key={index}
-                                onClick={() => handleResultClick(item)}
-                                className="w-full flex items-start gap-3 p-2.5 rounded-xl bg-[#091540]/40 hover:bg-[#1b2cc1]/30 border border-[#3d518c]/35 hover:border-[#7692ff]/60 text-left transition-all group"
-                              >
-                                <div className="w-8 h-8 rounded-lg bg-[#040a1c] border border-[#3d518c]/50 flex items-center justify-center shrink-0 group-hover:border-[#7692ff]/40">
-                                  <IconComponent className="w-4 h-4 text-[#abd2fa] group-hover:text-white transition-colors" />
-                                </div>
-                                <div className="flex-grow min-w-0">
-                                  <div className="flex items-center gap-1.5">
-                                    <span className="text-xs font-bold text-white font-mono truncate">{item.title}</span>
-                                    <span className="text-[8px] font-mono text-[#7692ff] tracking-[0.1em] font-black uppercase shrink-0 px-1.5 py-0.5 rounded bg-[#3d518c]/20">
-                                      {item.category}
-                                    </span>
-                                  </div>
-                                  <p className="text-[10px] text-gray-400 mt-0.5 line-clamp-1">{item.desc}</p>
-                                </div>
-                                <ArrowRight className="w-3.5 h-3.5 text-[#3d518c] opacity-0 group-hover:opacity-100 group-hover:text-[#7692ff] transition-all shrink-0 mt-1" />
-                              </button>
-                            );
-                          })
-                        ) : (
-                          <div className="py-8 text-center text-gray-400 font-mono space-y-2">
-                            <Terminal className="w-6 h-6 text-[#3d518c] mx-auto animate-pulse" />
-                            <p className="text-[10px] uppercase tracking-widest font-bold">No results found</p>
-                            <p className="text-[9px] text-gray-500 font-sans">Try 'Placement', 'Kaura', or 'Pillars'</p>
-                          </div>
-                        )}
-                      </div>
+                      <UserPlus className="w-4 h-4 sm:w-5 sm:h-5 text-[#6f8faf]" />
                     )}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-
-            {/* Desktop Navigation */}
-            <div className="hidden xl:flex items-center gap-8 shrink-0">
-              <button
-                onClick={() => scrollSmoothTo('positioning')}
-                className="font-mono text-[11px] text-[#abd2fa] hover:text-white transition-all uppercase tracking-[0.12em] font-bold cursor-pointer"
-              >
-                Positioning
-              </button>
-              <button
-                onClick={() => scrollSmoothTo('services')}
-                className="font-mono text-[11px] text-[#abd2fa] hover:text-white transition-all uppercase tracking-[0.12em] font-bold cursor-pointer"
-              >
-                Projects
-              </button>
-              <button
-                onClick={() => scrollSmoothTo('leadership')}
-                className="font-mono text-[11px] text-[#abd2fa] hover:text-white transition-all uppercase tracking-[0.12em] font-bold cursor-pointer"
-              >
-                Leadership
-              </button>
-            </div>
-
-            {/* Actions */}
-            <div className="flex items-center gap-3 shrink-0">
-              <button
-                onClick={() => scrollSmoothTo('onboarding')}
-                className="px-5 py-2.5 rounded bg-gradient-to-r from-[#3d518c] to-[#7692ff] text-white font-mono text-[11px] uppercase tracking-[0.12em] font-bold hover:opacity-95 hover:shadow-md transition-all active:scale-[0.98] cursor-pointer max-sm:hidden shadow-sm"
-              >
-                {hasActiveToken ? 'Dashboard' : 'Join'}
-              </button>
-
-              <button
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="xl:hidden p-2 border border-[#3d518c]/70 bg-[#3d518c]/40 rounded-xl text-white hover:bg-[#09153a]/90 transition-colors cursor-pointer"
-              >
-                {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-              </button>
-            </div>
-          </div>
-
-          {/* Mobile Menu */}
-          {mobileMenuOpen && (
-            <div className="mt-4 pt-6 border-t border-[#3d518c]/40 flex flex-col gap-6 xl:hidden animate-fade-in">
-              <div className="flex flex-col gap-3 text-left">
+                  </div>
+                  <div>
+                    <h3 className="font-sans text-base sm:text-lg font-black text-white">
+                      {authMode === 'login' ? 'Welcome Back' : 'Create Account'}
+                    </h3>
+                    <p className="text-[10px] sm:text-xs text-[#6f8faf] font-medium">
+                      {authMode === 'login' ? 'Sign in to your student account' : 'Join the EETIRP ecosystem'}
+                    </p>
+                  </div>
+                </div>
                 <button
-                  onClick={() => scrollSmoothTo('positioning')}
-                  className="font-mono text-xs text-[#abd2fa] hover:text-white transition-all uppercase tracking-widest text-left py-3 border-b border-[#3d518c]/25 flex items-center justify-between"
+                  onClick={() => {
+                    setAuthMode(null);
+                    setShowConfirmationMessage(false);
+                    setError(null);
+                    setSuccessMessage(null);
+                  }}
+                  className="p-1.5 sm:p-2 hover:bg-[#1a3a5a] rounded-lg transition-all"
                 >
-                  <span>Our Positioning</span> <Compass className="w-4 h-4 text-[#abd2fa]" />
-                </button>
-                <button
-                  onClick={() => scrollSmoothTo('services')}
-                  className="font-mono text-xs text-[#abd2fa] hover:text-white transition-all uppercase tracking-widest text-left py-3 border-b border-[#3d518c]/25 flex items-center justify-between"
-                >
-                  <span>What We Do</span> <Monitor className="w-4 h-4 text-[#abd2fa]" />
-                </button>
-                <button
-                  onClick={() => scrollSmoothTo('leadership')}
-                  className="font-mono text-xs text-[#abd2fa] hover:text-white transition-all uppercase tracking-widest text-left py-3 border-b border-[#3d518c]/25 flex items-center justify-between"
-                >
-                  <span>Leadership</span> <Users className="w-4 h-4 text-[#abd2fa]" />
-                </button>
-                <button
-                  onClick={() => scrollSmoothTo('onboarding')}
-                  className="font-mono text-xs text-[#abd2fa] hover:text-white transition-all uppercase tracking-widest text-left py-3 border-b border-[#3d518c]/25 flex items-center justify-between"
-                >
-                  <span>Join Ecosystem</span> <Send className="w-4 h-4 text-[#abd2fa]" />
+                  <X className="w-4 h-4 sm:w-5 sm:h-5 text-[#6f8faf]" />
                 </button>
               </div>
 
-              <button
-                onClick={() => scrollSmoothTo('onboarding')}
-                className="w-full py-3.5 text-center bg-gradient-to-r from-[#3d518c] to-[#7692ff]/85 text-white font-mono text-xs uppercase tracking-widest font-bold rounded-lg shadow-md cursor-pointer"
-              >
-                {hasActiveToken ? 'Open Candidate Portal' : 'Join Ecosystem'}
-              </button>
-            </div>
-          )}
-        </div>
-      </nav>
+              {/* Error Messages */}
+              {error && (
+                <div className="mb-4 p-3 bg-red-900/20 border border-red-800/50 rounded-lg flex items-start gap-2">
+                  <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
+                  <p className="text-xs text-red-300">{error}</p>
+                </div>
+              )}
+
+              {/* Success Messages */}
+              {successMessage && (
+                <div className="mb-4 p-3 bg-green-900/20 border border-green-800/50 rounded-lg flex items-start gap-2">
+                  <CheckCircle className="w-4 h-4 text-green-400 shrink-0 mt-0.5" />
+                  <p className="text-xs text-green-300">{successMessage}</p>
+                </div>
+              )}
+
+              {/* CONFIRMATION MESSAGE - Show after registration */}
+              {showConfirmationMessage && (
+                <div className="mb-4 p-4 bg-blue-900/20 border border-blue-800/50 rounded-lg">
+                  <div className="flex items-start gap-3">
+                    <MailCheck className="w-5 h-5 text-blue-400 shrink-0 mt-0.5" />
+                    <div>
+                      <h4 className="text-sm font-bold text-white mb-1">Verify Your Email</h4>
+                      <p className="text-xs text-blue-300 mb-2">
+                        We sent a confirmation link to <span className="font-bold text-white">{registeredEmail}</span>
+                      </p>
+                      <p className="text-xs text-blue-300/80 mb-3">
+                        Please check your inbox and click the link to verify your account.
+                        Don't forget to check your spam folder!
+                      </p>
+                      <div className="flex flex-col sm:flex-row gap-2">
+                        <button
+                          onClick={() => {
+                            setAuthMode(null);
+                            setShowConfirmationMessage(false);
+                          }}
+                          className="px-4 py-2 bg-[#4a6a8f] hover:bg-[#6f8faf] text-white font-mono text-[10px] uppercase tracking-widest font-bold rounded-lg transition-all"
+                        >
+                          I'll check my email
+                        </button>
+                        <button
+                          onClick={resendConfirmation}
+                          disabled={loading}
+                          className="px-4 py-2 bg-[#1a3a5a] border border-[#1a3a5a] hover:border-[#4a6a8f] text-white font-mono text-[10px] uppercase tracking-widest font-bold rounded-lg transition-all disabled:opacity-50"
+                        >
+                          {loading ? 'Sending...' : 'Resend Email'}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Login Form */}
+              {authMode === 'login' && !showConfirmationMessage && (
+                <form onSubmit={handleLogin} className="space-y-3 sm:space-y-4">
+                  <div>
+                    <label className="font-mono text-[9px] sm:text-[10px] text-[#6f8faf] uppercase tracking-widest font-black block mb-1 sm:mb-1.5">
+                      Email Address
+                    </label>
+                    <input
+                      type="email"
+                      required
+                      value={loginData.email}
+                      onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
+                      className="w-full bg-[#0d1f33] border border-[#1a3a5a] focus:border-[#4a6a8f] rounded-lg px-3 sm:px-4 py-2.5 sm:py-3 text-white font-sans text-sm focus:outline-none focus:ring-1 focus:ring-[#4a6a8f]/20 placeholder-[#4a6a8f]"
+                      placeholder="student@university.edu"
+                      disabled={loading}
+                    />
+                  </div>
+                  <div>
+                    <label className="font-mono text-[9px] sm:text-[10px] text-[#6f8faf] uppercase tracking-widest font-black block mb-1 sm:mb-1.5">
+                      Password
+                    </label>
+                    <input
+                      type="password"
+                      required
+                      value={loginData.password}
+                      onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
+                      className="w-full bg-[#0d1f33] border border-[#1a3a5a] focus:border-[#4a6a8f] rounded-lg px-3 sm:px-4 py-2.5 sm:py-3 text-white font-sans text-sm focus:outline-none focus:ring-1 focus:ring-[#4a6a8f]/20 placeholder-[#4a6a8f]"
+                      placeholder="••••••••"
+                      disabled={loading}
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full py-3 sm:py-3.5 bg-[#4a6a8f] hover:bg-[#6f8faf] text-white font-mono text-[10px] sm:text-xs uppercase tracking-widest font-black rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {loading ? 'Signing in...' : 'Sign In'}
+                  </button>
+                  <p className="text-center text-[10px] sm:text-xs text-[#6f8faf]">
+                    Don't have an account?{' '}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setAuthMode('register');
+                        setError(null);
+                        setSuccessMessage(null);
+                      }}
+                      className="text-white font-bold hover:underline"
+                    >
+                      Register here
+                    </button>
+                  </p>
+                </form>
+              )}
+
+              {/* Register Form */}
+              {authMode === 'register' && !showConfirmationMessage && (
+                <form onSubmit={handleRegister} className="space-y-3 sm:space-y-4">
+                  <div>
+                    <label className="font-mono text-[9px] sm:text-[10px] text-[#6f8faf] uppercase tracking-widest font-black block mb-1 sm:mb-1.5">
+                      Full Name
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={registerData.fullName}
+                      onChange={(e) => setRegisterData({ ...registerData, fullName: e.target.value })}
+                      className="w-full bg-[#0d1f33] border border-[#1a3a5a] focus:border-[#4a6a8f] rounded-lg px-3 sm:px-4 py-2.5 sm:py-3 text-white font-sans text-sm focus:outline-none focus:ring-1 focus:ring-[#4a6a8f]/20 placeholder-[#4a6a8f]"
+                      placeholder="John Doe"
+                      disabled={loading}
+                    />
+                  </div>
+                  <div>
+                    <label className="font-mono text-[9px] sm:text-[10px] text-[#6f8faf] uppercase tracking-widest font-black block mb-1 sm:mb-1.5">
+                      Email Address
+                    </label>
+                    <input
+                      type="email"
+                      required
+                      value={registerData.email}
+                      onChange={(e) => setRegisterData({ ...registerData, email: e.target.value })}
+                      className="w-full bg-[#0d1f33] border border-[#1a3a5a] focus:border-[#4a6a8f] rounded-lg px-3 sm:px-4 py-2.5 sm:py-3 text-white font-sans text-sm focus:outline-none focus:ring-1 focus:ring-[#4a6a8f]/20 placeholder-[#4a6a8f]"
+                      placeholder="student@university.edu"
+                      disabled={loading}
+                    />
+                  </div>
+                  <div>
+                    <label className="font-mono text-[9px] sm:text-[10px] text-[#6f8faf] uppercase tracking-widest font-black block mb-1 sm:mb-1.5">
+                      Password
+                    </label>
+                    <input
+                      type="password"
+                      required
+                      value={registerData.password}
+                      onChange={(e) => setRegisterData({ ...registerData, password: e.target.value })}
+                      className="w-full bg-[#0d1f33] border border-[#1a3a5a] focus:border-[#4a6a8f] rounded-lg px-3 sm:px-4 py-2.5 sm:py-3 text-white font-sans text-sm focus:outline-none focus:ring-1 focus:ring-[#4a6a8f]/20 placeholder-[#4a6a8f]"
+                      placeholder="Min 6 characters"
+                      disabled={loading}
+                    />
+                  </div>
+                  <div>
+                    <label className="font-mono text-[9px] sm:text-[10px] text-[#6f8faf] uppercase tracking-widest font-black block mb-1 sm:mb-1.5">
+                      Confirm Password
+                    </label>
+                    <input
+                      type="password"
+                      required
+                      value={registerData.confirmPassword}
+                      onChange={(e) => setRegisterData({ ...registerData, confirmPassword: e.target.value })}
+                      className="w-full bg-[#0d1f33] border border-[#1a3a5a] focus:border-[#4a6a8f] rounded-lg px-3 sm:px-4 py-2.5 sm:py-3 text-white font-sans text-sm focus:outline-none focus:ring-1 focus:ring-[#4a6a8f]/20 placeholder-[#4a6a8f]"
+                      placeholder="••••••••"
+                      disabled={loading}
+                    />
+                  </div>
+                  <div>
+                    <label className="font-mono text-[9px] sm:text-[10px] text-[#6f8faf] uppercase tracking-widest font-black block mb-1 sm:mb-1.5">
+                      I am a
+                    </label>
+                    <select
+                      value={registerData.role}
+                      onChange={(e) => setRegisterData({ ...registerData, role: e.target.value })}
+                      className="w-full bg-[#0d1f33] border border-[#1a3a5a] focus:border-[#4a6a8f] rounded-lg px-3 sm:px-4 py-2.5 sm:py-3 text-white font-sans text-sm focus:outline-none"
+                      disabled={loading}
+                    >
+                      <option className="bg-[#0a1628]" value="student">Student</option>
+                      <option className="bg-[#0a1628]" value="professional">Professional</option>
+                      <option className="bg-[#0a1628]" value="startup">Startup Founder</option>
+                      <option className="bg-[#0a1628]" value="corporate">Corporate Partner</option>
+                    </select>
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full py-3 sm:py-3.5 bg-[#4a6a8f] hover:bg-[#6f8faf] text-white font-mono text-[10px] sm:text-xs uppercase tracking-widest font-black rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {loading ? 'Creating account...' : 'Create Account'}
+                  </button>
+                  <p className="text-center text-[10px] sm:text-xs text-[#6f8faf]">
+                    Already have an account?{' '}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setAuthMode('login');
+                        setError(null);
+                        setSuccessMessage(null);
+                      }}
+                      className="text-white font-bold hover:underline"
+                    >
+                      Sign in here
+                    </button>
+                  </p>
+                </form>
+              )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }
