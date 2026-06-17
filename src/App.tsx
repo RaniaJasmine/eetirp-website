@@ -343,6 +343,7 @@ export default function App() {
           </div>
         </div>
       </section>
+
       {/* 4. Ecosystem Summary Metrics - Dark Blue Background */}
       <section className="py-8 px-6 md:px-16 max-w-5xl mx-auto w-full">
         <motion.div
@@ -386,6 +387,7 @@ export default function App() {
           </div>
         </motion.div>
       </section>
+
       {/* 5. Our Positioning Model Tabbed Panels Section */}
       <section className="py-24 bg-[#faf8f5] border-y border-[#d0dae8]" id="positioning">
         <div className="px-6 md:px-16 max-w-6xl mx-auto">
@@ -679,7 +681,7 @@ export default function App() {
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 
-            {/* Left selector menu - Cards - DARKER TEXT */}
+            {/* Left selector menu - Cards */}
             <div className="lg:col-span-12 xl:col-span-5 space-y-4 lg:grid lg:grid-cols-3 xl:flex xl:flex-col gap-4 lg:space-y-0">
 
               {/* Project Tab 1 Selector */}
@@ -804,7 +806,7 @@ export default function App() {
 
             </div>
 
-            {/* Right side: Interactive Simulated Web Browser Console - STAYS THE SAME */}
+            {/* Right side: Interactive Simulated Web Browser Console */}
             <div className="lg:col-span-12 xl:col-span-7 bg-[#0a1628] rounded-2xl border border-[#1a3a5a] shadow-xl overflow-hidden font-mono text-white text-xs">
 
               {/* Browser control bar */}
