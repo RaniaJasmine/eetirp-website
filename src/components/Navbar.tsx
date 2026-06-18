@@ -18,6 +18,7 @@ import {
   MailCheck
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { toast, Toaster } from 'react-hot-toast';
 import EetirpLogo from './EetirpLogo';
 import { supabase } from '../lib/supabase';
 
@@ -48,6 +49,30 @@ export default function Navbar() {
   const sidebarTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const sidebarRef = useRef<HTMLDivElement>(null);
 
+  // Send email notification to company
+  const sendEmailNotification = async (name: string, email: string, role: string) => {
+    try {
+      const response = await fetch('/api/notify-registration', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          role,
+          timestamp: new Date().toISOString(),
+        }),
+      });
+
+      if (!response.ok) {
+        console.warn('Email notification failed, but user registration was successful.');
+      }
+    } catch (error) {
+      console.warn('Email notification error:', error);
+    }
+  };
+
   // Check current session on mount
   useEffect(() => {
     const getSession = async () => {
@@ -61,6 +86,15 @@ export default function Navbar() {
           name: session.user.user_metadata?.full_name || session.user.email?.split('@')[0],
           role: session.user.user_metadata?.role || 'student'
         }));
+        toast.success(`Welcome back, ${session.user.user_metadata?.full_name || session.user.email?.split('@')[0]}! 👋`, {
+          duration: 4000,
+          position: 'top-center',
+          style: {
+            background: '#0a1628',
+            color: '#fff',
+            border: '1px solid #1a3a5a',
+          },
+        });
       }
     };
     getSession();
@@ -123,6 +157,15 @@ export default function Navbar() {
 
       if (error) {
         if (error.message.includes('Email not confirmed')) {
+          toast.error('Please confirm your email first! Check your inbox.', {
+            duration: 5000,
+            position: 'top-center',
+            style: {
+              background: '#0a1628',
+              color: '#fff',
+              border: '1px solid #ff4444',
+            },
+          });
           setError('Please confirm your email address first. Check your inbox for the confirmation link.');
         } else {
           throw error;
@@ -131,7 +174,19 @@ export default function Navbar() {
         return;
       }
 
-      setSuccessMessage('Login successful! Welcome back!');
+      const userName = data.user.user_metadata?.full_name || data.user.email?.split('@')[0] || 'User';
+
+      toast.success(`🎉 Welcome back, ${userName}!`, {
+        duration: 4000,
+        position: 'top-center',
+        style: {
+          background: '#0a1628',
+          color: '#fff',
+          border: '1px solid #4a6a8f',
+        },
+        icon: '👋',
+      });
+
       setIsLoggedIn(true);
       setUser(data.user);
       setAuthMode(null);
@@ -141,11 +196,20 @@ export default function Navbar() {
       localStorage.setItem('eetirp_user', JSON.stringify({
         id: data.user.id,
         email: data.user.email,
-        name: data.user.user_metadata?.full_name || data.user.email?.split('@')[0],
+        name: userName,
         role: data.user.user_metadata?.role || 'student'
       }));
 
     } catch (err: any) {
+      toast.error('Login failed. Please check your credentials.', {
+        duration: 4000,
+        position: 'top-center',
+        style: {
+          background: '#0a1628',
+          color: '#fff',
+          border: '1px solid #ff4444',
+        },
+      });
       setError(err.message || 'Login failed. Please check your credentials.');
       console.error('Login error:', err);
     } finally {
@@ -162,12 +226,30 @@ export default function Navbar() {
     setShowConfirmationMessage(false);
 
     if (registerData.password !== registerData.confirmPassword) {
+      toast.error('Passwords do not match!', {
+        duration: 3000,
+        position: 'top-center',
+        style: {
+          background: '#0a1628',
+          color: '#fff',
+          border: '1px solid #ff4444',
+        },
+      });
       setError('Passwords do not match!');
       setLoading(false);
       return;
     }
 
     if (registerData.password.length < 6) {
+      toast.error('Password must be at least 6 characters long.', {
+        duration: 3000,
+        position: 'top-center',
+        style: {
+          background: '#0a1628',
+          color: '#fff',
+          border: '1px solid #ff4444',
+        },
+      });
       setError('Password must be at least 6 characters long.');
       setLoading(false);
       return;
@@ -190,6 +272,34 @@ export default function Navbar() {
       // Store the email for the confirmation message
       setRegisteredEmail(registerData.email);
 
+      // Send email notification to company
+      await sendEmailNotification(
+        registerData.fullName,
+        registerData.email,
+        registerData.role
+      );
+
+      // Show success toast
+      toast.success(`✅ Registration successful, ${registerData.fullName}!`, {
+        duration: 4000,
+        position: 'top-center',
+        style: {
+          background: '#0a1628',
+          color: '#fff',
+          border: '1px solid #4a6a8f',
+        },
+      });
+
+      toast.loading('📧 Please check your email to confirm your account...', {
+        duration: 5000,
+        position: 'top-center',
+        style: {
+          background: '#0a1628',
+          color: '#fff',
+          border: '1px solid #4a6a8f',
+        },
+      });
+
       // Show confirmation message
       setShowConfirmationMessage(true);
       setSuccessMessage(null);
@@ -203,9 +313,16 @@ export default function Navbar() {
         role: 'student'
       });
 
-      // Don't close the modal - show the confirmation message instead
-
     } catch (err: any) {
+      toast.error('Registration failed. Please try again.', {
+        duration: 4000,
+        position: 'top-center',
+        style: {
+          background: '#0a1628',
+          color: '#fff',
+          border: '1px solid #ff4444',
+        },
+      });
       setError(err.message || 'Registration failed. Please try again.');
       console.error('Registration error:', err);
     } finally {
@@ -221,8 +338,27 @@ export default function Navbar() {
       setUser(null);
       localStorage.removeItem('eetirp_user');
       setSidebarOpen(false);
+
+      toast.success('👋 Logged out successfully!', {
+        duration: 3000,
+        position: 'top-center',
+        style: {
+          background: '#0a1628',
+          color: '#fff',
+          border: '1px solid #4a6a8f',
+        },
+      });
     } catch (err: any) {
       console.error('Logout error:', err);
+      toast.error('Logout failed. Please try again.', {
+        duration: 3000,
+        position: 'top-center',
+        style: {
+          background: '#0a1628',
+          color: '#fff',
+          border: '1px solid #ff4444',
+        },
+      });
     }
   };
 
@@ -249,8 +385,26 @@ export default function Navbar() {
 
       if (error) throw error;
 
+      toast.success(`📧 Confirmation email resent to ${registeredEmail}`, {
+        duration: 4000,
+        position: 'top-center',
+        style: {
+          background: '#0a1628',
+          color: '#fff',
+          border: '1px solid #4a6a8f',
+        },
+      });
       setSuccessMessage(`Confirmation email resent to ${registeredEmail}. Please check your inbox.`);
     } catch (err: any) {
+      toast.error('Failed to resend confirmation email.', {
+        duration: 3000,
+        position: 'top-center',
+        style: {
+          background: '#0a1628',
+          color: '#fff',
+          border: '1px solid #ff4444',
+        },
+      });
       setError(err.message || 'Failed to resend confirmation email. Please try again.');
     } finally {
       setLoading(false);
@@ -306,12 +460,14 @@ export default function Navbar() {
 
   return (
     <>
+      {/* Toaster component for notifications */}
+      <Toaster />
+
       {/* Fixed Logo - Only sidebar trigger remains */}
       <div className="fixed top-4 left-4 sm:top-5 sm:left-6 lg:top-6 lg:left-8 z-[120] flex items-center gap-3 group cursor-pointer select-none bg-[#0a1628]/95 backdrop-blur-md border border-[#1a3a5a] px-4 py-2.5 rounded-2xl shadow-lg hover:shadow-xl hover:border-[#4a6a8f]/50 transition-all duration-300 sidebar-trigger">
         <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-[#4a6a8f]/30 rounded-tl-xl group-hover:border-[#6f8faf] transition-colors" />
         <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-[#4a6a8f]/30 rounded-br-xl group-hover:border-[#6f8faf] transition-colors" />
 
-        {/* Three-line hamburger - Sidebar trigger */}
         <div
           className="flex flex-col gap-1.5 cursor-pointer p-1.5 hover:bg-[#1a3a5a] rounded-lg transition-all sidebar-trigger"
           onMouseEnter={handleSidebarEnter}
@@ -323,7 +479,6 @@ export default function Navbar() {
           <span className="w-5 h-0.5 bg-[#b0c4d8] rounded-full transition-all"></span>
         </div>
 
-        {/* Logo */}
         <div
           className="flex items-center gap-2.5 cursor-pointer"
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
@@ -542,6 +697,15 @@ export default function Navbar() {
                           onClick={() => {
                             setAuthMode(null);
                             setShowConfirmationMessage(false);
+                            toast.success('📧 Confirmation email sent! Check your inbox.', {
+                              duration: 3000,
+                              position: 'top-center',
+                              style: {
+                                background: '#0a1628',
+                                color: '#fff',
+                                border: '1px solid #4a6a8f',
+                              },
+                            });
                           }}
                           className="px-4 py-2 bg-[#4a6a8f] hover:bg-[#6f8faf] text-white font-mono text-[10px] uppercase tracking-widest font-bold rounded-lg transition-all"
                         >
