@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef, ChangeEvent, FormEvent } from 'react';
 import Navbar from './components/Navbar';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
+import ComingSoon from './pages/ComingSoon';
 import EetirpLogo from './components/EetirpLogo';
 import { motion, AnimatePresence } from 'motion/react';
 import {
@@ -35,7 +36,20 @@ import {
   Linkedin,
   MessageSquare,
   Users,
-  ExternalLink
+  ExternalLink,
+  Code,
+  Book,
+  Coffee,
+  Sparkles,
+  Zap,
+  Globe,
+  Server,
+  FileCode,
+  UserCheck,
+  BarChart,
+  Mic,
+  Users as UsersIcon,
+  Brain
 } from 'lucide-react';
 
 // Interfaces mapping
@@ -122,10 +136,43 @@ const programPillars = [
   }
 ];
 
+// Learning categories data
+const learningCategories = [
+  { id: 'leetcode', title: 'LeetCode', icon: Code, desc: 'Master Data Structures & Algorithms with real-world problems & LeetCode solutions', color: 'text-[#1a4a8a]', bg: 'bg-[#e8edf5]' },
+  { id: 'dsa', title: 'DSA & Algorithms', icon: Brain, desc: 'Master Data Structures & Algorithms with real-world problems', color: 'text-[#1a4a8a]', bg: 'bg-[#e8edf5]' },
+  { id: 'java', title: 'Java', icon: Coffee, desc: 'Core Java to Advanced Java with hands-on practice', color: 'text-[#1a4a8a]', bg: 'bg-[#e8edf5]' },
+  { id: 'cpp', title: 'C/C++', icon: Code, desc: 'Learn C & C++ from basics to advanced level', color: 'text-[#1a4a8a]', bg: 'bg-[#e8edf5]' },
+  { id: 'python', title: 'Python', icon: Terminal, desc: 'Python programming for development, automation & more', color: 'text-[#1a4a8a]', bg: 'bg-[#e8edf5]' },
+  { id: 'webdev', title: 'Web Development', icon: Globe, desc: 'HTML, CSS, JS, React, Node.js & full stack projects', color: 'text-[#1a4a8a]', bg: 'bg-[#e8edf5]' },
+  { id: 'devops', title: 'DevOps', icon: Server, desc: 'CI/CD, Docker, Kubernetes, AWS & real-world DevOps', color: 'text-[#1a4a8a]', bg: 'bg-[#e8edf5]' },
+  { id: 'finalyear', title: 'Final Year Projects', icon: FileCode, desc: 'End-to-end projects with report & presentation', color: 'text-[#1a4a8a]', bg: 'bg-[#e8edf5]' },
+  { id: 'tutorship', title: 'Tutorship & Guidance', icon: UserCheck, desc: '1-on-1 mentorship & academic support', color: 'text-[#1a4a8a]', bg: 'bg-[#e8edf5]' },
+];
+
+// Mock test categories
+const mockTestCategories = [
+  { id: 'demo', title: 'Demo Mock Tests', icon: BarChart, desc: 'Try free demo mock tests to evaluate your skills', color: 'text-[#1a4a8a]', bg: 'bg-[#e8edf5]' },
+  { id: 'premium', title: 'Premium Mock Tests', icon: Award, desc: 'Paid premium mock tests with detailed analytics & performance tracking', color: 'text-[#1a4a8a]', bg: 'bg-[#e8edf5]' },
+  { id: 'ai', title: 'AI Interview Sessions', icon: Mic, desc: 'AI-powered mock interviews with real-time feedback & improvement tips', color: 'text-[#1a4a8a]', bg: 'bg-[#e8edf5]' },
+  { id: 'technical', title: 'Technical Interviews', icon: UsersIcon, desc: 'Expert-led technical interview preparation sessions', color: 'text-[#1a4a8a]', bg: 'bg-[#e8edf5]' },
+  { id: 'aptitude', title: 'Aptitude & General Tests', icon: Brain, desc: 'Prepare for aptitude, logical & reasoning tests', color: 'text-[#1a4a8a]', bg: 'bg-[#e8edf5]' },
+];
+
+// Feature badges
+const featureBadges = [
+  { icon: Users, label: 'EXPERT TRAINERS', color: 'text-[#1a4a8a]' },
+  { icon: Rocket, label: 'REAL WORLD PROJECTS', color: 'text-[#1a4a8a]' },
+  { icon: Award, label: 'CERTIFICATION SUPPORT', color: 'text-[#1a4a8a]' },
+  { icon: Briefcase, label: 'PLACEMENT GUIDANCE', color: 'text-[#1a4a8a]' },
+];
+
 export default function App() {
   const location = useLocation();
+  const navigate = useNavigate();
   const isTerms = location.pathname === '/terms';
   const isPrivacy = location.pathname === '/privacy';
+  const isComingSoon = location.pathname === '/coming-soon';  // ← ADD THIS LINE
+
 
   // If on Terms page, render Terms component
   if (isTerms) {
@@ -135,6 +182,10 @@ export default function App() {
   // If on Privacy page, render Privacy component
   if (isPrivacy) {
     return <Privacy />;
+  }
+  // If on Coming Soon page, render ComingSoon component  // ← ADD THIS BLOCK
+  if (isComingSoon) {
+    return <ComingSoon />;
   }
 
   const logoUrl = 'https://lh3.googleusercontent.com/aida-public/AB6AXuA0Tb6eZNPswTOWvOMp-_Cr62CASvc3c1--t-f0c7jsDTf3DDa7VXGVV11ESxGD_HPDFE6RpScmJ370lwrrXmeazaZQYIj8m7hn0bJnYSqk3_XU5Dcss9V5eW-P-xrSNI2qfpfd9ie5Xo4uoeJkjFjwkdZpiCEgEQwCCuNfJ2qP6w02tLoQGSCGsEMAaHgvSpakzfOeNKfmFZIVxuo120cSRST7WO0Yiycj1foar3k9F_g1CBYb24k1YjOVtZMW5K-7OamqD3AzPLU';
@@ -212,6 +263,11 @@ export default function App() {
     setSubmitStatus('idle');
   };
 
+  // Navigate to coming soon page
+  const goToComingSoon = () => {
+    navigate('/coming-soon');
+  };
+
   useEffect(() => {
     const handleSelectProject = (e: Event) => {
       const projId = (e as CustomEvent).detail;
@@ -229,62 +285,80 @@ export default function App() {
       {/* 1. Header Navigation System */}
       <Navbar />
 
-      {/* 2. Hero Section - Clean Cream/Blue Theme */}
+      {/* 2. NEW Hero Section - Brand Refresh */}
       <header className="relative min-h-[90vh] flex flex-col items-center justify-center pt-28 pb-20 px-6 md:px-16 text-center overflow-hidden bg-[#faf8f5]">
 
         {/* Subtle ambient focus points */}
         <div className="absolute top-1/4 left-1/3 w-[600px] h-[600px] bg-[#1a4a8a]/4 blur-[130px] pointer-events-none rounded-full" />
         <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-[#1a4a8a]/3 blur-[120px] pointer-events-none rounded-full" />
 
-        <div className="relative z-10 max-w-4xl mx-auto flex flex-col items-center">
+        <div className="relative z-10 max-w-5xl mx-auto flex flex-col items-center">
+          {/* Tagline */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1, duration: 0.6 }}
+            className="mb-4"
+          >
+            <span className="font-mono text-xs sm:text-sm tracking-[0.3em] text-[#1a4a8a] font-black uppercase">
+              INNOVATE. INTEGRATE. ELEVATE.
+            </span>
+          </motion.div>
+
           {/* Main Logo Emblem */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, type: "spring" }}
             whileHover={{ scale: 1.02 }}
-            className="mb-8 flex flex-col items-center justify-center select-none"
+            className="mb-6 flex flex-col items-center justify-center select-none"
           >
-            <div className="w-52 h-52 sm:w-60 sm:h-60 bg-white rounded-2xl p-5 shadow-[0_8px_40px_rgba(0,0,0,0.06)] border border-[#d0dae8] flex items-center justify-center relative overflow-hidden group">
+            <div className="w-48 h-48 sm:w-56 sm:h-56 bg-white rounded-2xl p-5 shadow-[0_8px_40px_rgba(0,0,0,0.06)] border border-[#d0dae8] flex items-center justify-center relative overflow-hidden group">
               <EetirpLogo className="w-full h-full" isAnimated={true} />
             </div>
           </motion.div>
 
-          {/* Capsule badge - Cream/Blue theme */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2, duration: 0.6 }}
-            className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full bg-[#e8edf5] border border-[#1a4a8a]/20 mb-8"
-          >
-            <span className="font-mono text-[10px] uppercase tracking-[0.18em] font-black text-[#1a4a8a]">
-              BRIDGING THEORY & ENTERPRISE EXCELLENCE
-            </span>
-          </motion.div>
-
-          {/* Main heading - Dark navy */}
+          {/* Main Tagline - EMPOWERING TALENT. BUILDING SOLUTIONS. ELEVATING FUTURES. */}
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.7 }}
-            className="font-sans text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-[#0a1628] mb-6 leading-[1.08] tracking-tight max-w-4xl"
+            transition={{ delay: 0.2, duration: 0.7 }}
+            className="font-sans text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-[#0a1628] mb-4 leading-[1.1] tracking-tight max-w-4xl"
           >
-            The Hybrid Ecosystem <br className="hidden md:inline" />
-            <span className="text-[#1a4a8a] relative">
-              For Engineering Leaders
-              <span className="absolute bottom-1 left-0 right-0 h-[3px] bg-[#1a4a8a]/20"></span>
-            </span>
+            <span className="text-[#1a4a8a]">EMPOWERING</span> TALENT.
+            <br className="hidden sm:inline" />
+            <span className="text-[#1a4a8a]">BUILDING</span> SOLUTIONS.
+            <br className="hidden sm:inline" />
+            <span className="text-[#1a4a8a]">ELEVATING</span> FUTURES.
           </motion.h1>
 
-          {/* Descriptive block */}
+          {/* Value Proposition */}
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.5, duration: 0.8 }}
-            className="font-sans text-base sm:text-lg md:text-xl text-[#4a6a8f] max-w-2xl mx-auto mb-12 leading-relaxed font-medium"
+            transition={{ delay: 0.4, duration: 0.8 }}
+            className="font-sans text-base sm:text-lg md:text-xl text-[#4a6a8f] max-w-3xl mx-auto mb-10 leading-relaxed font-medium"
           >
-            EETIRP merges a high-impact <span className="text-[#1a4a8a] font-bold">Engineering Academy</span> with an active, production-scale <span className="text-[#1a4a8a] font-bold">Startup Studio</span>. We train elite software engineers by building live production platforms together.
+            Your one-stop destination for online training, project development, mock tests & career growth.
           </motion.p>
+
+          {/* 4 Feature Badges */}
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5, duration: 0.7 }}
+            className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-3xl mb-10"
+          >
+            {featureBadges.map((badge, index) => {
+              const Icon = badge.icon;
+              return (
+                <div key={index} className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white border border-[#d0dae8] shadow-sm hover:shadow-md transition-all hover:border-[#1a4a8a]/30">
+                  <Icon className={`w-4 h-4 ${badge.color}`} />
+                  <span className="font-mono text-[9px] tracking-wider text-[#0a1628] font-black uppercase">{badge.label}</span>
+                </div>
+              );
+            })}
+          </motion.div>
 
           {/* CTA Button Actions */}
           <motion.div
@@ -296,18 +370,18 @@ export default function App() {
             <motion.button
               whileHover={{ scale: 1.02, y: -1 }}
               whileTap={{ scale: 0.98 }}
-              onClick={() => scrollSmoothTo('onboarding')}
+              onClick={() => scrollSmoothTo('learning')}
               className="w-full sm:w-auto px-8 py-4 rounded-xl bg-[#1a4a8a] hover:bg-[#0d2f5a] text-white font-mono text-xs uppercase tracking-[0.16em] font-extrabold shadow-sm shadow-[#1a4a8a]/10 cursor-pointer transition-all duration-300"
             >
-              Join Ecosystem Cohort
+              Start Learning
             </motion.button>
             <motion.button
               whileHover={{ scale: 1.02, y: -1 }}
               whileTap={{ scale: 0.98 }}
-              onClick={() => scrollSmoothTo('services')}
+              onClick={() => scrollSmoothTo('onboarding')}
               className="w-full sm:w-auto px-8 py-4 rounded-xl bg-white text-[#1a4a8a] border-2 border-[#d0dae8] font-mono text-xs uppercase tracking-[0.16em] font-bold hover:border-[#1a4a8a]/40 hover:bg-[#f8f9fa] transition-all duration-300 cursor-pointer"
             >
-              View Live Projects
+              Join Ecosystem
             </motion.button>
           </motion.div>
         </div>
@@ -319,7 +393,7 @@ export default function App() {
           className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center select-none cursor-pointer group"
           onClick={() => scrollSmoothTo('notice-marquee')}
         >
-          <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-[#1a4a8a] font-bold mb-1.5 opacity-60 group-hover:opacity-100 transition-opacity">Explore Studio</span>
+          <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-[#1a4a8a] font-bold mb-1.5 opacity-60 group-hover:opacity-100 transition-opacity">Explore More</span>
           <ArrowDown className="w-4 h-4 text-[#1a4a8a]" />
         </motion.div>
       </header>
@@ -402,7 +476,105 @@ export default function App() {
         </motion.div>
       </section>
 
-      {/* 5. Our Positioning Model Tabbed Panels Section */}
+      {/* 5. NEW - What You Can Learn Section */}
+      <section className="py-24 px-6 md:px-16 max-w-6xl mx-auto w-full bg-white" id="learning">
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <span className="font-mono text-[10px] text-[#1a4a8a] tracking-[0.25em] bg-[#e8edf5] border border-[#1a4a8a]/20 px-4 py-1.5 rounded-full font-black uppercase shadow-sm">
+            WHAT YOU CAN LEARN
+          </span>
+          <h2 className="font-sans text-3xl md:text-4xl font-extrabold text-[#0a1628] mt-5 mb-4 tracking-tight leading-none">
+            Master Your Engineering Journey
+          </h2>
+          <p className="font-sans text-[#4a6a8f] text-base leading-relaxed font-medium">
+            From fundamentals to advanced concepts, we've got you covered with industry-relevant courses.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {learningCategories.map((category) => {
+            const Icon = category.icon;
+            return (
+              <motion.div
+                key={category.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4 }}
+                onClick={goToComingSoon}
+                className="group relative p-6 rounded-2xl bg-[#faf8f5] border border-[#d0dae8] hover:border-[#1a4a8a]/40 hover:shadow-md transition-all duration-300 cursor-pointer"
+              >
+                <div className="flex items-start gap-4">
+                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${category.bg} border border-[#d0dae8] shrink-0 group-hover:border-[#1a4a8a]/30 transition-all`}>
+                    <Icon className={`w-6 h-6 ${category.color}`} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-sans text-lg font-black text-[#0a1628] group-hover:text-[#1a4a8a] transition-colors">
+                      {category.title}
+                    </h3>
+                    <p className="font-sans text-sm text-[#4a6a8f] leading-relaxed mt-1">
+                      {category.desc}
+                    </p>
+                    <button className="mt-3 px-4 py-1.5 text-xs font-mono font-bold text-[#1a4a8a] border border-[#1a4a8a]/30 rounded-full hover:bg-[#1a4a8a] hover:text-white transition-all">
+                      Enroll →
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* 6. NEW - Test & Interview Preparation Section */}
+      <section className="py-24 px-6 md:px-16 max-w-6xl mx-auto w-full bg-[#faf8f5]" id="mocktests">
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <span className="font-mono text-[10px] text-[#1a4a8a] tracking-[0.25em] bg-[#e8edf5] border border-[#1a4a8a]/20 px-4 py-1.5 rounded-full font-black uppercase shadow-sm">
+            TEST & INTERVIEW PREPARATION
+          </span>
+          <h2 className="font-sans text-3xl md:text-4xl font-extrabold text-[#0a1628] mt-5 mb-4 tracking-tight leading-none">
+            Ace Your Interviews & Exams
+          </h2>
+          <p className="font-sans text-[#4a6a8f] text-base leading-relaxed font-medium">
+            Practice with mock tests, AI interviews, and expert-led sessions to boost your confidence.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+          {mockTestCategories.map((category) => {
+            const Icon = category.icon;
+            return (
+              <motion.div
+                key={category.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4 }}
+                onClick={goToComingSoon}
+                className="group relative p-6 rounded-2xl bg-white border border-[#d0dae8] hover:border-[#1a4a8a]/40 hover:shadow-md transition-all duration-300 cursor-pointer"
+              >
+                <div className="flex items-start gap-4">
+                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${category.bg} border border-[#d0dae8] shrink-0 group-hover:border-[#1a4a8a]/30 transition-all`}>
+                    <Icon className={`w-6 h-6 ${category.color}`} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-sans text-lg font-black text-[#0a1628] group-hover:text-[#1a4a8a] transition-colors">
+                      {category.title}
+                    </h3>
+                    <p className="font-sans text-sm text-[#4a6a8f] leading-relaxed mt-1">
+                      {category.desc}
+                    </p>
+                    <button className="mt-3 px-4 py-1.5 text-xs font-mono font-bold text-[#1a4a8a] border border-[#1a4a8a]/30 rounded-full hover:bg-[#1a4a8a] hover:text-white transition-all">
+                      Start Test →
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* 7. Our Positioning Model Tabbed Panels Section */}
       <section className="py-24 bg-[#faf8f5] border-y border-[#d0dae8]" id="positioning">
         <div className="px-6 md:px-16 max-w-6xl mx-auto">
 
@@ -617,7 +789,7 @@ export default function App() {
         </div>
       </section>
 
-      {/* 6. Program Pillars Grid layout */}
+      {/* 8. Program Pillars Grid layout */}
       <section className="py-24 px-6 md:px-16 max-w-6xl mx-auto w-full bg-white" id="pillars">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <span className="font-mono text-[10px] text-[#1a4a8a] tracking-[0.25em] bg-[#e8edf5] border border-[#1a4a8a]/20 px-4 py-1.5 rounded-full font-black uppercase shadow-sm">
@@ -677,7 +849,7 @@ export default function App() {
         </div>
       </section>
 
-      {/* 7. SaaS Sandbox Lab Section */}
+      {/* 9. SaaS Sandbox Lab Section */}
       <section className="py-24 bg-[#faf8f5] border-y border-[#d0dae8]" id="services">
         <div className="px-6 md:px-16 max-w-6xl mx-auto">
 
@@ -967,7 +1139,7 @@ export default function App() {
         </div>
       </section>
 
-      {/* 8. Leadership & Backing Grid panel */}
+      {/* 10. Leadership & Backing Grid panel */}
       <section className="py-24 bg-white border-y border-[#d0dae8]" id="leadership">
         <div className="px-6 md:px-16 max-w-6xl mx-auto">
 
@@ -1285,7 +1457,22 @@ export default function App() {
         </div>
       </section>
 
-      {/* 9. Cohort Intake Form and Placement Assessment diagnostics */}
+      {/* 11. NEW - Final CTA Section */}
+      <section className="py-24 px-6 md:px-16 max-w-4xl mx-auto w-full text-center bg-white">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+        >
+          <h2 className="font-sans text-3xl md:text-4xl lg:text-5xl font-extrabold text-[#0a1628] mb-6 tracking-tight leading-tight">
+            LET'S BUILD <span className="text-[#1a4a8a]">SOLUTIONS</span> TOGETHER.
+          </h2>
+
+        </motion.div>
+      </section>
+
+      {/* 12. Cohort Intake Form and Placement Assessment diagnostics */}
       <section className="py-24 px-6 md:px-16 max-w-6xl mx-auto w-full bg-[#faf8f5]" id="onboarding">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
 
@@ -1524,7 +1711,7 @@ export default function App() {
         </div>
       </section>
 
-      {/* 10. Footer */}
+      {/* 13. Footer */}
       <footer className="bg-[#0a1628] text-white py-16 px-6 md:px-16 border-t-2 border-[#1a3a5a] overflow-hidden relative" id="footer">
 
         <div className="absolute bottom-0 right-0 w-80 h-80 bg-[#1a4a8a]/5 blur-[100px] pointer-events-none rounded-full"></div>
@@ -1564,13 +1751,13 @@ export default function App() {
             </h5>
             <ul className="space-y-2.5 text-xs font-mono text-gray-400">
               <li>
-                <button onClick={() => scrollSmoothTo('positioning')} className="hover:text-white transition-colors cursor-pointer text-left">
-                  Our Positioning
+                <button onClick={() => scrollSmoothTo('learning')} className="hover:text-white transition-colors cursor-pointer text-left">
+                  What You Can Learn
                 </button>
               </li>
               <li>
-                <button onClick={() => scrollSmoothTo('services')} className="hover:text-white transition-colors cursor-pointer text-left">
-                  What We Do
+                <button onClick={() => scrollSmoothTo('mocktests')} className="hover:text-white transition-colors cursor-pointer text-left">
+                  Mock Tests
                 </button>
               </li>
               <li>

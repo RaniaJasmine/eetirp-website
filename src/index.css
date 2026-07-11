@@ -115,3 +115,32 @@ textarea {
 .modal-backdrop {
   backdrop-filter: blur(4px);
 }
+
+/* Prevent text selection and copying */
+body {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+/* Allow selection on input fields and textareas (important for forms) */
+input,
+textarea,
+select {
+  user-select: text;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+}
+
+/* Prevent image dragging */
+img {
+  -webkit-user-drag: none;
+  user-drag: none;
+}
+
+/* Prevent right-click context menu (optional) */
+* {
+  -webkit-touch-callout: none;
+}
