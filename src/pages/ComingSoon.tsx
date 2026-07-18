@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { motion } from 'motion/react';
 import { ArrowLeft, ExternalLink } from 'lucide-react';
-import { useNavigate } useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 export default function ComingSoon() {
     const navigate = useNavigate();
