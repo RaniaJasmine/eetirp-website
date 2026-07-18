@@ -1143,9 +1143,396 @@ export default function App() {
           </div>
         </div>
       </section>
+      {/* 10. Leadership & Backing Grid panel - UPDATED WITH ALL MEMBERS */}
+      <section className="py-24 bg-white border-y border-[#d0dae8]" id="leadership">
+        <div className="px-6 md:px-16 max-w-6xl mx-auto">
 
-      <span className="w-1.5 h-1.5 rounded-full bg-[#1a4a8a]"></span> Outcome Strategy Node
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <span className="font-mono text-[10px] text-[#1a4a8a] tracking-[0.25em] bg-[#e8edf5] border border-[#1a4a8a]/20 px-4 py-1.5 rounded-full font-black uppercase shadow-sm">
+              Leadership & Backing
+            </span>
+            <h2 className="font-sans text-3xl md:text-4xl font-extrabold text-[#0a1628] mt-5 mb-4 tracking-tight leading-none">
+              Meet the Ecosystem Drivers
+            </h2>
+            <p className="font-sans text-[#4a6a8f] text-base leading-relaxed font-medium">
+              The architects, developers, and strategic partners building EETIRP into a production-scale engineering sandbox.
+            </p>
+          </div>
 
+          {/* Leadership Cards Row - 3 columns */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+            {/* Kaushal Kumar Baitha */}
+            <motion.div
+              whileHover={{ y: -4 }}
+              className="flex flex-col justify-between p-5 rounded-2xl bg-[#faf8f5] border border-[#d0dae8] hover:border-[#1a4a8a]/30 shadow-sm hover:shadow-md transition-all duration-300"
+            >
+              <div>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-11 h-11 rounded-xl bg-[#e8edf5] flex items-center justify-center text-[#1a4a8a] font-sans font-black text-base border border-[#d0dae8] select-none shrink-0">
+                    KB
+                  </div>
+                  <span className="font-mono text-[8px] tracking-widest text-[#1a4a8a] uppercase font-bold bg-[#e8edf5] border border-[#d0dae8] px-2 py-0.5 rounded select-none">
+                    CORE TEAM
+                  </span>
+                </div>
+                <h4 className="font-sans text-base font-black text-[#0a1628] mb-0.5">
+                  Kaushal Kumar Baitha
+                </h4>
+                <p className="font-mono text-[9px] tracking-wider uppercase text-[#1a4a8a] font-black mb-2">
+                  FOUNDER & CHIEF ARCHITECT
+                </p>
+                <p className="font-sans text-sm text-[#4a6a8f] leading-relaxed mb-4 font-medium line-clamp-3">
+                  Leading technical directions and backend systems design. Passionate about project-centric engineering and enterprise system development.
+                </p>
+              </div>
+              <a href="https://kaushalbaitha7.vercel.app/" target="_blank" rel="noopener noreferrer" className="w-full py-2 bg-[#1a4a8a] border border-[#1a4a8a]/30 text-white font-mono text-[9px] uppercase tracking-widest font-black rounded-lg hover:bg-[#0d2f5a] cursor-pointer transition-all text-center block">
+                Explore Portfolio
+              </a>
+            </motion.div>
+
+            {/* Karthik C M */}
+            <motion.div
+              whileHover={{ y: -4 }}
+              className="flex flex-col justify-between p-5 rounded-2xl bg-[#faf8f5] border border-[#d0dae8] hover:border-[#1a4a8a]/30 shadow-sm hover:shadow-md transition-all duration-300"
+            >
+              <div>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-11 h-11 rounded-xl bg-[#e8edf5] flex items-center justify-center text-[#1a4a8a] font-sans font-black text-base border border-[#d0dae8] select-none shrink-0">
+                    KC
+                  </div>
+                  <span className="font-mono text-[8px] tracking-widest text-[#1a4a8a] uppercase font-bold bg-[#e8edf5] border border-[#d0dae8] px-2 py-0.5 rounded select-none">
+                    OPERATIONS
+                  </span>
+                </div>
+                <h4 className="font-sans text-base font-black text-[#0a1628] mb-0.5">
+                  Karthik C M
+                </h4>
+                <p className="font-mono text-[9px] tracking-wider uppercase text-[#1a4a8a] font-black mb-2">
+                  CO-FOUNDER & HEAD OF OPERATIONS
+                </p>
+                <p className="font-sans text-sm text-[#4a6a8f] leading-relaxed mb-4 font-medium line-clamp-3">
+                  Driving strategic development programs, bootcamp architectures, and product validation cycles to produce day-one engineering leaders.
+                </p>
+              </div>
+              <a href="https://karthikcm.vercel.app/" target="_blank" rel="noopener noreferrer" className="w-full py-2 bg-[#1a4a8a] border border-[#1a4a8a]/30 text-white font-mono text-[9px] uppercase tracking-widest font-black rounded-lg hover:bg-[#0d2f5a] cursor-pointer transition-all text-center block">
+                Explore Portfolio
+              </a>
+            </motion.div>
+
+            {/* Karthik D */}
+            <motion.div
+              whileHover={{ y: -4 }}
+              className="flex flex-col justify-between p-5 rounded-2xl bg-[#faf8f5] border border-[#d0dae8] hover:border-[#1a4a8a]/30 shadow-sm hover:shadow-md transition-all duration-300"
+            >
+              <div>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-11 h-11 rounded-xl bg-[#e8edf5] flex items-center justify-center text-[#1a4a8a] font-sans font-black text-base border border-[#d0dae8] select-none shrink-0">
+                    KD
+                  </div>
+                  <span className="font-mono text-[8px] tracking-widest text-[#1a4a8a] uppercase font-bold bg-[#e8edf5] border border-[#d0dae8] px-2 py-0.5 rounded select-none">
+                    INVESTING
+                  </span>
+                </div>
+                <h4 className="font-sans text-base font-black text-[#0a1628] mb-0.5">
+                  Karthik D
+                </h4>
+                <p className="font-mono text-[9px] tracking-wider uppercase text-[#1a4a8a] font-black mb-2">
+                  STRATEGIC INVESTOR
+                </p>
+                <p className="font-sans text-sm text-[#4a6a8f] leading-relaxed mb-4 font-medium line-clamp-3">
+                  Sourcing strategic growth capital, industrial partnerships, and scaling market pipelines for in-house studio SaaS platforms.
+                </p>
+              </div>
+              <a href="https://karthikd1.vercel.app/" target="_blank" rel="noopener noreferrer" className="w-full py-2 bg-[#1a4a8a] border border-[#1a4a8a]/30 text-white font-mono text-[9px] uppercase tracking-widest font-black rounded-lg hover:bg-[#0d2f5a] cursor-pointer transition-all text-center block">
+                Explore Portfolio
+              </a>
+            </motion.div>
+
+            {/* Pritee Kumari Singh */}
+            <motion.div
+              whileHover={{ y: -4 }}
+              className="flex flex-col justify-between p-5 rounded-2xl bg-[#faf8f5] border border-[#d0dae8] hover:border-[#1a4a8a]/30 shadow-sm hover:shadow-md transition-all duration-300"
+            >
+              <div>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-11 h-11 rounded-xl bg-[#e8edf5] flex items-center justify-center text-[#1a4a8a] font-sans font-black text-base border border-[#d0dae8] select-none shrink-0">
+                    PS
+                  </div>
+                  <span className="font-mono text-[8px] tracking-widest text-[#1a4a8a] uppercase font-bold bg-[#e8edf5] border border-[#d0dae8] px-2 py-0.5 rounded select-none">
+                    STRATEGY
+                  </span>
+                </div>
+                <h4 className="font-sans text-base font-black text-[#0a1628] mb-0.5">
+                  Pritee Kumari Singh
+                </h4>
+                <p className="font-mono text-[9px] tracking-wider uppercase text-[#1a4a8a] font-black mb-2">
+                  MARKETING & STRATEGY LEADER
+                </p>
+                <p className="font-sans text-sm text-[#4a6a8f] leading-relaxed mb-4 font-medium line-clamp-3">
+                  Orchestrating market penetration campaigns, corporate engagement models, and scaling university pipelines for live studio cohorts.
+                </p>
+              </div>
+              <a href="https://priteesingh.vercel.app/" target="_blank" rel="noopener noreferrer" className="w-full py-2 bg-[#1a4a8a] border border-[#1a4a8a]/30 text-white font-mono text-[9px] uppercase tracking-widest font-black rounded-lg hover:bg-[#0d2f5a] cursor-pointer transition-all text-center block">
+                Explore Portfolio
+              </a>
+            </motion.div>
+
+            {/* Rajdev Rana */}
+            <motion.div
+              whileHover={{ y: -4 }}
+              className="flex flex-col justify-between p-5 rounded-2xl bg-[#faf8f5] border border-[#d0dae8] hover:border-[#1a4a8a]/30 shadow-sm hover:shadow-md transition-all duration-300"
+            >
+              <div>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-11 h-11 rounded-xl bg-[#e8edf5] flex items-center justify-center text-[#1a4a8a] font-sans font-black text-base border border-[#d0dae8] select-none shrink-0">
+                    RR
+                  </div>
+                  <span className="font-mono text-[8px] tracking-widest text-[#1a4a8a] uppercase font-bold bg-[#e8edf5] border border-[#d0dae8] px-2 py-0.5 rounded select-none">
+                    MGMT
+                  </span>
+                </div>
+                <h4 className="font-sans text-base font-black text-[#0a1628] mb-0.5">
+                  Rajdev Rana
+                </h4>
+                <p className="font-mono text-[9px] tracking-wider uppercase text-[#1a4a8a] font-black mb-2">
+                  PROJECT COORDINATOR
+                </p>
+                <p className="font-sans text-sm text-[#4a6a8f] leading-relaxed mb-4 font-medium line-clamp-3">
+                  Streamlines cross-functional workflows and strategic resource management to ensure seamless project execution.
+                </p>
+              </div>
+              <a href="https://rajdev-rana.vercel.app/" target="_blank" rel="noopener noreferrer" className="w-full py-2 bg-[#1a4a8a] border border-[#1a4a8a]/30 text-white font-mono text-[9px] uppercase tracking-widest font-black rounded-lg hover:bg-[#0d2f5a] cursor-pointer transition-all text-center block">
+                Explore Portfolio
+              </a>
+            </motion.div>
+
+            {/* Rania Jasmine S */}
+            <motion.div
+              whileHover={{ y: -4 }}
+              className="flex flex-col justify-between p-5 rounded-2xl bg-[#faf8f5] border border-[#d0dae8] hover:border-[#1a4a8a]/30 shadow-sm hover:shadow-md transition-all duration-300"
+            >
+              <div>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-11 h-11 rounded-xl bg-[#e8edf5] flex items-center justify-center text-[#1a4a8a] font-sans font-black text-base border border-[#d0dae8] select-none shrink-0">
+                    RJ
+                  </div>
+                  <span className="font-mono text-[8px] tracking-widest text-[#1a4a8a] uppercase font-bold bg-[#e8edf5] border border-[#d0dae8] px-2 py-0.5 rounded select-none">
+                    DEV
+                  </span>
+                </div>
+                <h4 className="font-sans text-base font-black text-[#0a1628] mb-0.5">
+                  Rania Jasmine S
+                </h4>
+                <p className="font-mono text-[9px] tracking-wider uppercase text-[#1a4a8a] font-black mb-2">
+                  FULL STACK DEVELOPER
+                </p>
+                <p className="font-sans text-sm text-[#4a6a8f] leading-relaxed mb-4 font-medium line-clamp-3">
+                  Engineers resilient, full-stack software solutions from database layout to production deployment, optimizing for speed and scale.
+                </p>
+              </div>
+              <a href="https://raniajasmine-s.vercel.app/" target="_blank" rel="noopener noreferrer" className="w-full py-2 bg-[#1a4a8a] border border-[#1a4a8a]/30 text-white font-mono text-[9px] uppercase tracking-widest font-black rounded-lg hover:bg-[#0d2f5a] cursor-pointer transition-all text-center block">
+                Explore Portfolio
+              </a>
+            </motion.div>
+
+            {/* ===== NEW MEMBERS ===== */}
+
+            {/* K. Sachin */}
+            <motion.div
+              whileHover={{ y: -4 }}
+              className="flex flex-col justify-between p-5 rounded-2xl bg-[#faf8f5] border border-[#d0dae8] hover:border-[#1a4a8a]/30 shadow-sm hover:shadow-md transition-all duration-300"
+            >
+              <div>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-11 h-11 rounded-xl bg-[#e8edf5] flex items-center justify-center text-[#1a4a8a] font-sans font-black text-base border border-[#d0dae8] select-none shrink-0">
+                    KS
+                  </div>
+                  <span className="font-mono text-[8px] tracking-widest text-[#1a4a8a] uppercase font-bold bg-[#e8edf5] border border-[#d0dae8] px-2 py-0.5 rounded select-none">
+                    TECHNICAL
+                  </span>
+                </div>
+                <h4 className="font-sans text-base font-black text-[#0a1628] mb-0.5">
+                  K. Sachin
+                </h4>
+                <p className="font-mono text-[9px] tracking-wider uppercase text-[#1a4a8a] font-black mb-2">
+                  AI & FRONT-END DEVELOPER
+                </p>
+                <p className="font-sans text-sm text-[#4a6a8f] leading-relaxed mb-4 font-medium line-clamp-3">
+                  Computer Science undergraduate (9.27 CGPA) building AI-driven apps and responsive interfaces. Proficient in C, C++, Python.
+                </p>
+              </div>
+              <a href="#" target="_blank" rel="noopener noreferrer" className="w-full py-2 bg-[#1a4a8a] border border-[#1a4a8a]/30 text-white font-mono text-[9px] uppercase tracking-widest font-black rounded-lg hover:bg-[#0d2f5a] cursor-pointer transition-all text-center block">
+                Explore Portfolio
+              </a>
+            </motion.div>
+
+            {/* Karthik B S */}
+            <motion.div
+              whileHover={{ y: -4 }}
+              className="flex flex-col justify-between p-5 rounded-2xl bg-[#faf8f5] border border-[#d0dae8] hover:border-[#1a4a8a]/30 shadow-sm hover:shadow-md transition-all duration-300"
+            >
+              <div>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-11 h-11 rounded-xl bg-[#e8edf5] flex items-center justify-center text-[#1a4a8a] font-sans font-black text-base border border-[#d0dae8] select-none shrink-0">
+                    KB
+                  </div>
+                  <span className="font-mono text-[8px] tracking-widest text-[#1a4a8a] uppercase font-bold bg-[#e8edf5] border border-[#d0dae8] px-2 py-0.5 rounded select-none">
+                    TECHNICAL
+                  </span>
+                </div>
+                <h4 className="font-sans text-base font-black text-[#0a1628] mb-0.5">
+                  Karthik B S
+                </h4>
+                <p className="font-mono text-[9px] tracking-wider uppercase text-[#1a4a8a] font-black mb-2">
+                  SOFTWARE ENGINEER
+                </p>
+                <p className="font-sans text-sm text-[#4a6a8f] leading-relaxed mb-4 font-medium line-clamp-3">
+                  Software engineer with Python, C skills. Built Online Appointment Booking System with secure auth. CS graduate (GPA: 8.74).
+                </p>
+              </div>
+              <a href="#" target="_blank" rel="noopener noreferrer" className="w-full py-2 bg-[#1a4a8a] border border-[#1a4a8a]/30 text-white font-mono text-[9px] uppercase tracking-widest font-black rounded-lg hover:bg-[#0d2f5a] cursor-pointer transition-all text-center block">
+                Explore Portfolio
+              </a>
+            </motion.div>
+
+            {/* Founder's Blog */}
+            <motion.div
+              whileHover={{ y: -4 }}
+              className="flex flex-col justify-between p-5 rounded-2xl bg-[#faf8f5] border-2 border-[#1a4a8a]/30 shadow-sm hover:shadow-md transition-all duration-300 relative overflow-hidden"
+            >
+              <div className="absolute -top-12 -right-12 w-32 h-32 bg-[#1a4a8a]/5 rounded-full blur-2xl"></div>
+              <div>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-11 h-11 rounded-xl bg-[#1a4a8a] flex items-center justify-center text-white font-sans font-black text-base border border-[#1a4a8a]/30 select-none shrink-0">
+                    <BookOpen className="w-5 h-5" />
+                  </div>
+                  <span className="font-mono text-[8px] tracking-widest text-[#1a4a8a] uppercase font-bold bg-[#e8edf5] border border-[#1a4a8a]/20 px-2 py-0.5 rounded select-none">
+                    BLOG
+                  </span>
+                </div>
+                <h4 className="font-sans text-base font-black text-[#0a1628] mb-0.5">
+                  Founder's Blog
+                </h4>
+                <p className="font-mono text-[9px] tracking-wider uppercase text-[#1a4a8a] font-black mb-2">
+                  INSIGHTS FROM KAUSHAL KUMAR BAITHA
+                </p>
+                <p className="font-sans text-sm text-[#4a6a8f] leading-relaxed mb-4 font-medium line-clamp-3">
+                  Deep dives into system architecture, engineering culture, startup building, and the philosophy behind EETIRP's project-centric learning model.
+                </p>
+              </div>
+              <a href="https://kaushalkumarbaitha.vercel.app/" target="_blank" rel="noopener noreferrer" className="w-full py-2 bg-[#1a4a8a] border border-[#1a4a8a]/30 text-white font-mono text-[9px] uppercase tracking-widest font-black rounded-lg hover:bg-[#0d2f5a] cursor-pointer transition-all text-center block">
+                Read Blog →
+              </a>
+            </motion.div>
+
+          </div> {/* END of Leadership Cards Grid */}
+
+          {/* Trainer Grid list */}
+          <div className="text-center max-w-3xl mx-auto mt-24 mb-16">
+            <span className="font-mono text-[10px] text-[#1a4a8a] tracking-[0.25em] bg-[#e8edf5] border border-[#1a4a8a]/20 px-4 py-1.5 rounded-full font-black uppercase shadow-sm">
+              TRAINERS
+            </span>
+            <h2 className="font-sans text-3xl md:text-4xl font-extrabold text-[#0a1628] mt-5 mb-4 tracking-tight leading-tight">
+              Technical Trainers & Career Experts
+            </h2>
+            <p className="font-sans text-[#4a6a8f] text-base leading-relaxed font-medium">
+              Industry-experienced educators delivering intensive stack-specific sprints, DSA strategies, and outcome-focused interview preparations.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-y-12 gap-x-8">
+
+            {/* Raushan Kumar Baitha */}
+            <motion.div
+              whileHover={{ y: -4 }}
+              className="flex flex-col justify-between p-5 rounded-2xl bg-[#faf8f5] border border-[#d0dae8] hover:border-[#1a4a8a]/30 shadow-sm hover:shadow-md transition-all duration-300"
+            >
+              <div>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-11 h-11 rounded-xl bg-[#e8edf5] flex items-center justify-center text-[#1a4a8a] font-sans font-black text-base border border-[#d0dae8] select-none shrink-0">
+                    RB
+                  </div>
+                  <span className="font-mono text-[8px] tracking-widest text-[#1a4a8a] uppercase font-bold bg-[#e8edf5] border border-[#d0dae8] px-2 py-0.5 rounded select-none">
+                    SYSTEMS
+                  </span>
+                </div>
+                <h4 className="font-sans text-base font-black text-[#0a1628] mb-0.5">
+                  Raushan Kumar Baitha
+                </h4>
+                <p className="font-mono text-[9px] tracking-wider uppercase text-[#1a4a8a] font-black mb-2">
+                  TECHNICAL TRAINER & SYSTEMS SPECIALIST
+                </p>
+                <p className="font-sans text-sm text-[#4a6a8f] leading-relaxed mb-4 font-medium line-clamp-3">
+                  Specializing in systems architecture, deep-dive backend frameworks, database configuration, and production deployment cycles.
+                </p>
+              </div>
+              <div className="w-full py-2 bg-[#e8edf5] border border-[#d0dae8] text-[#1a4a8a] font-mono text-[8px] uppercase tracking-widest font-black rounded-lg select-none flex items-center justify-center gap-1.5 text-center">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#1a4a8a]"></span> Systems Architecture Node
+              </div>
+            </motion.div>
+
+            {/* Anup Tiwari */}
+            <motion.div
+              whileHover={{ y: -4 }}
+              className="flex flex-col justify-between p-5 rounded-2xl bg-[#faf8f5] border border-[#d0dae8] hover:border-[#1a4a8a]/30 shadow-sm hover:shadow-md transition-all duration-300"
+            >
+              <div>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-11 h-11 rounded-xl bg-[#e8edf5] flex items-center justify-center text-[#1a4a8a] font-sans font-black text-base border border-[#d0dae8] select-none shrink-0">
+                    AT
+                  </div>
+                  <span className="font-mono text-[8px] tracking-widest text-[#1a4a8a] uppercase font-bold bg-[#e8edf5] border border-[#d0dae8] px-2 py-0.5 rounded select-none">
+                    ALGORITHMS
+                  </span>
+                </div>
+                <h4 className="font-sans text-base font-black text-[#0a1628] mb-0.5">
+                  Anup Tiwari
+                </h4>
+                <p className="font-mono text-[9px] tracking-wider uppercase text-[#1a4a8a] font-black mb-2">
+                  TECHNICAL TRAINER & DSA MENTOR
+                </p>
+                <p className="font-sans text-sm text-[#4a6a8f] leading-relaxed mb-4 font-medium line-clamp-3">
+                  Mentoring students in complex algorithmic thinking, foundational structures, optimized problem-solving, and software assessment.
+                </p>
+              </div>
+              <div className="w-full py-2 bg-[#e8edf5] border border-[#d0dae8] text-[#1a4a8a] font-mono text-[8px] uppercase tracking-widest font-black rounded-lg select-none flex items-center justify-center gap-1.5 text-center">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#1a4a8a]"></span> DSA & Logic Sprints
+              </div>
+            </motion.div>
+
+            {/* Nirmal Shekhar */}
+            <motion.div
+              whileHover={{ y: -4 }}
+              className="flex flex-col justify-between p-5 rounded-2xl bg-[#faf8f5] border border-[#d0dae8] hover:border-[#1a4a8a]/30 shadow-sm hover:shadow-md transition-all duration-300"
+            >
+              <div>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-11 h-11 rounded-xl bg-[#e8edf5] flex items-center justify-center text-[#1a4a8a] font-sans font-black text-base border border-[#d0dae8] select-none shrink-0">
+                    NS
+                  </div>
+                  <span className="font-mono text-[8px] tracking-widest text-[#1a4a8a] uppercase font-bold bg-[#e8edf5] border border-[#d0dae8] px-2 py-0.5 rounded select-none">
+                    PLACEMENT
+                  </span>
+                </div>
+                <h4 className="font-sans text-base font-black text-[#0a1628] mb-0.5">
+                  Nirmal Shekhar
+                </h4>
+                <p className="font-mono text-[9px] tracking-wider uppercase text-[#1a4a8a] font-black mb-2">
+                  CAREER EXPERT & PLACEMENT STRATEGIST
+                </p>
+                <p className="font-sans text-sm text-[#4a6a8f] leading-relaxed mb-4 font-medium line-clamp-3">
+                  Guiding candidate pipelines with mock behavioral drills, ATS criteria matching, and outcome-driven placement solutions.
+                </p>
+              </div>
+              <div className="w-full py-2 bg-[#e8edf5] border border-[#d0dae8] text-[#1a4a8a] font-mono text-[8px] uppercase tracking-widest font-black rounded-lg select-none flex items-center justify-center gap-1.5 text-center">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#1a4a8a]"></span> Outcome Strategy Node
+              </div>
+            </motion.div>
+
+          </div>
+        </div>
+      </section>
       {/* 11. NEW - Final CTA Section */}
       <section className="py-24 px-6 md:px-16 max-w-4xl mx-auto w-full text-center bg-white">
         <motion.div
