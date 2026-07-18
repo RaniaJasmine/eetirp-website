@@ -136,26 +136,26 @@ const programPillars = [
   }
 ];
 
-// Learning categories data
+// Learning categories data - UPDATED: Removed LeetCode, added Javascript and Java Full Stack
 const learningCategories = [
-  { id: 'leetcode', title: 'LeetCode', icon: Code, desc: 'Master Data Structures & Algorithms with real-world problems & LeetCode solutions', color: 'text-[#1a4a8a]', bg: 'bg-[#e8edf5]' },
   { id: 'dsa', title: 'DSA & Algorithms', icon: Brain, desc: 'Master Data Structures & Algorithms with real-world problems', color: 'text-[#1a4a8a]', bg: 'bg-[#e8edf5]' },
+  { id: 'c', title: 'C', icon: Code, desc: 'Learn C programming from basics to advanced concepts', color: 'text-[#1a4a8a]', bg: 'bg-[#e8edf5]' },
+  { id: 'cpp', title: 'C++', icon: Code2, desc: 'Master C++ with object-oriented programming & STL', color: 'text-[#1a4a8a]', bg: 'bg-[#e8edf5]' },
   { id: 'java', title: 'Java', icon: Coffee, desc: 'Core Java to Advanced Java with hands-on practice', color: 'text-[#1a4a8a]', bg: 'bg-[#e8edf5]' },
-  { id: 'cpp', title: 'C/C++', icon: Code, desc: 'Learn C & C++ from basics to advanced level', color: 'text-[#1a4a8a]', bg: 'bg-[#e8edf5]' },
   { id: 'python', title: 'Python', icon: Terminal, desc: 'Python programming for development, automation & more', color: 'text-[#1a4a8a]', bg: 'bg-[#e8edf5]' },
+  { id: 'javascript', title: 'Javascript', icon: Code, desc: 'Master JavaScript for frontend & backend development', color: 'text-[#1a4a8a]', bg: 'bg-[#e8edf5]' },
   { id: 'webdev', title: 'Web Development', icon: Globe, desc: 'HTML, CSS, JS, React, Node.js & full stack projects', color: 'text-[#1a4a8a]', bg: 'bg-[#e8edf5]' },
   { id: 'devops', title: 'DevOps', icon: Server, desc: 'CI/CD, Docker, Kubernetes, AWS & real-world DevOps', color: 'text-[#1a4a8a]', bg: 'bg-[#e8edf5]' },
-  { id: 'finalyear', title: 'Final Year Projects', icon: FileCode, desc: 'End-to-end projects with report & presentation', color: 'text-[#1a4a8a]', bg: 'bg-[#e8edf5]' },
-  { id: 'tutorship', title: 'Tutorship & Guidance', icon: UserCheck, desc: '1-on-1 mentorship & academic support', color: 'text-[#1a4a8a]', bg: 'bg-[#e8edf5]' },
+  { id: 'javafullstack', title: 'Java Full Stack', icon: Layers, desc: 'Complete Java Full Stack development with Spring Boot & React', color: 'text-[#1a4a8a]', bg: 'bg-[#e8edf5]' },
 ];
 
-// Mock test categories
+// Mock test categories - Updated: Demo Mock Test goes to mocktest.kaurahub.com
 const mockTestCategories = [
-  { id: 'demo', title: 'Demo Mock Tests', icon: BarChart, desc: 'Try free demo mock tests to evaluate your skills', color: 'text-[#1a4a8a]', bg: 'bg-[#e8edf5]' },
-  { id: 'premium', title: 'Premium Mock Tests', icon: Award, desc: 'Paid premium mock tests with detailed analytics & performance tracking', color: 'text-[#1a4a8a]', bg: 'bg-[#e8edf5]' },
-  { id: 'ai', title: 'AI Interview Sessions', icon: Mic, desc: 'AI-powered mock interviews with real-time feedback & improvement tips', color: 'text-[#1a4a8a]', bg: 'bg-[#e8edf5]' },
-  { id: 'technical', title: 'Technical Interviews', icon: UsersIcon, desc: 'Expert-led technical interview preparation sessions', color: 'text-[#1a4a8a]', bg: 'bg-[#e8edf5]' },
-  { id: 'aptitude', title: 'Aptitude & General Tests', icon: Brain, desc: 'Prepare for aptitude, logical & reasoning tests', color: 'text-[#1a4a8a]', bg: 'bg-[#e8edf5]' },
+  { id: 'demo', title: 'Demo Mock Tests', icon: BarChart, desc: 'Try free demo mock tests to evaluate your skills', color: 'text-[#1a4a8a]', bg: 'bg-[#e8edf5]', link: 'https://mocktest.kaurahub.com/' },
+  { id: 'premium', title: 'Premium Mock Tests', icon: Award, desc: 'Paid premium mock tests with detailed analytics & performance tracking', color: 'text-[#1a4a8a]', bg: 'bg-[#e8edf5]', link: 'https://kaurahub.com/' },
+  { id: 'ai', title: 'AI Interview Sessions', icon: Mic, desc: 'AI-powered mock interviews with real-time feedback & improvement tips', color: 'text-[#1a4a8a]', bg: 'bg-[#e8edf5]', link: 'https://kaurahub.com/' },
+  { id: 'technical', title: 'Technical Interviews', icon: UsersIcon, desc: 'Expert-led technical interview preparation sessions', color: 'text-[#1a4a8a]', bg: 'bg-[#e8edf5]', link: 'https://kaurahub.com/' },
+  { id: 'aptitude', title: 'Aptitude & General Tests', icon: Brain, desc: 'Prepare for aptitude, logical & reasoning tests', color: 'text-[#1a4a8a]', bg: 'bg-[#e8edf5]', link: 'https://kaurahub.com/' },
 ];
 
 // Feature badges
@@ -171,8 +171,7 @@ export default function App() {
   const navigate = useNavigate();
   const isTerms = location.pathname === '/terms';
   const isPrivacy = location.pathname === '/privacy';
-  const isComingSoon = location.pathname === '/coming-soon';  // ← ADD THIS LINE
-
+  const isComingSoon = location.pathname === '/coming-soon';
 
   // If on Terms page, render Terms component
   if (isTerms) {
@@ -183,7 +182,7 @@ export default function App() {
   if (isPrivacy) {
     return <Privacy />;
   }
-  // If on Coming Soon page, render ComingSoon component  // ← ADD THIS BLOCK
+  // If on Coming Soon page, render ComingSoon component
   if (isComingSoon) {
     return <ComingSoon />;
   }
@@ -263,9 +262,14 @@ export default function App() {
     setSubmitStatus('idle');
   };
 
-  // Navigate to coming soon page
-  const goToComingSoon = () => {
-    navigate('/coming-soon');
+  // Navigate to KauraHub
+  const goToKauraHub = () => {
+    window.open('https://kaurahub.com/', '_blank');
+  };
+
+  // Navigate to MockTest KauraHub
+  const goToMockTest = () => {
+    window.open('https://mocktest.kaurahub.com/', '_blank');
   };
 
   useEffect(() => {
@@ -476,7 +480,7 @@ export default function App() {
         </motion.div>
       </section>
 
-      {/* 5. NEW - What You Can Learn Section */}
+      {/* 5. NEW - What You Can Learn Section - UPDATED: Removed LeetCode, added C, Javascript, Java Full Stack */}
       <section className="py-24 px-6 md:px-16 max-w-6xl mx-auto w-full bg-white" id="learning">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <span className="font-mono text-[10px] text-[#1a4a8a] tracking-[0.25em] bg-[#e8edf5] border border-[#1a4a8a]/20 px-4 py-1.5 rounded-full font-black uppercase shadow-sm">
@@ -500,7 +504,7 @@ export default function App() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4 }}
-                onClick={goToComingSoon}
+                onClick={goToKauraHub}
                 className="group relative p-6 rounded-2xl bg-[#faf8f5] border border-[#d0dae8] hover:border-[#1a4a8a]/40 hover:shadow-md transition-all duration-300 cursor-pointer"
               >
                 <div className="flex items-start gap-4">
@@ -525,7 +529,7 @@ export default function App() {
         </div>
       </section>
 
-      {/* 6. NEW - Test & Interview Preparation Section */}
+      {/* 6. NEW - Test & Interview Preparation Section - UPDATED: Demo Mock Test goes to mocktest.kaurahub.com */}
       <section className="py-24 px-6 md:px-16 max-w-6xl mx-auto w-full bg-[#faf8f5]" id="mocktests">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <span className="font-mono text-[10px] text-[#1a4a8a] tracking-[0.25em] bg-[#e8edf5] border border-[#1a4a8a]/20 px-4 py-1.5 rounded-full font-black uppercase shadow-sm">
@@ -542,6 +546,7 @@ export default function App() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
           {mockTestCategories.map((category) => {
             const Icon = category.icon;
+            const handleClick = category.id === 'demo' ? goToMockTest : goToKauraHub;
             return (
               <motion.div
                 key={category.id}
@@ -549,7 +554,7 @@ export default function App() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4 }}
-                onClick={goToComingSoon}
+                onClick={handleClick}
                 className="group relative p-6 rounded-2xl bg-white border border-[#d0dae8] hover:border-[#1a4a8a]/40 hover:shadow-md transition-all duration-300 cursor-pointer"
               >
                 <div className="flex items-start gap-4">
@@ -1139,7 +1144,7 @@ export default function App() {
         </div>
       </section>
 
-      {/* 10. Leadership & Backing Grid panel */}
+      {/* 10. Leadership & Backing Grid panel - ALREADY UPDATED WITH ALL MEMBERS */}
       <section className="py-24 bg-white border-y border-[#d0dae8]" id="leadership">
         <div className="px-6 md:px-16 max-w-6xl mx-auto">
 
@@ -1240,7 +1245,8 @@ export default function App() {
                   Karthik D
                 </h4>
                 <p className="font-mono text-[10px] tracking-wider uppercase text-[#1a4a8a] font-black mb-3">
-                  STRATEGIC INVESTOR                </p>
+                  STRATEGIC INVESTOR
+                </p>
                 <p className="font-sans text-sm text-[#4a6a8f] leading-relaxed mb-6 font-medium">
                   Sourcing strategic growth capital, industrial partnerships, and scaling market pipelines for in-house studio SaaS platforms.
                 </p>
